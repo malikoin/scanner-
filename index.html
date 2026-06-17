@@ -6,410 +6,938 @@
 <title>VazyGood Scanner</title>
 <meta name="theme-color" content="#000">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;height:100dvh;user-select:none;overflow:hidden}
-.S{position:fixed;inset:0;display:none;flex-direction:column}.S.on{display:flex}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#fff; height:100dvh; overflow:hidden; user-select:none; }
 
-/* CONFIG */
-#sCfg{justify-content:center;align-items:center;padding:24px;z-index:90}
-.cfg{width:100%;max-width:340px;text-align:center}
-.cfg h2{font-size:1rem;color:#3b82f6;margin-bottom:6px}
-.cfg p{font-size:.68rem;color:#666;margin-bottom:14px;line-height:1.4}
-.cfg input{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#111;color:#fff;font-size:.72rem;font-family:monospace;margin-bottom:10px}
+/* === SCREENS === */
+.screen { position:fixed; inset:0; display:none; flex-direction:column; background:#000; }
+.screen.active { display:flex; }
 
-/* HOME */
-.hdr{padding:max(env(safe-area-inset-top),10px) 14px 8px;text-align:center;border-bottom:1px solid #151515}
-.hdr h1{font-size:.82rem;font-weight:700;letter-spacing:1.5px;color:#3b82f6}
-.hdr sub{font-size:.5rem;color:#444;letter-spacing:2px}
-.sts{display:flex;justify-content:center;gap:16px;padding:5px;font-size:.62rem;color:#444}
-.sts b{color:#fff}
-.feed{flex:1;overflow-y:auto;padding:8px 10px 110px}
-.emp{text-align:center;padding:24px;color:#333}
-.emp p{font-size:.7rem;line-height:1.4;margin-top:6px}
-.grd{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.cd{position:relative;border-radius:10px;overflow:hidden;background:#0a0a0a;border:1px solid #1a1a1a}
-.cd img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
-.cd .tg{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.7);padding:1px 5px;border-radius:3px;font-size:.5rem;color:#3b82f6;font-weight:600}
-.cd .dl{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(220,40,40,.8);border:none;border-radius:50%;color:#fff;font-size:.58rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.bar{position:fixed;bottom:0;left:0;right:0;padding:8px 10px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#000 20%);display:flex;gap:7px;z-index:10}
-.btn{flex:1;padding:13px;border-radius:11px;border:none;font-weight:600;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
-.btn:active{transform:scale(.96)}
-.bw{background:#fff;color:#000}
-.bb{background:#3b82f6;color:#fff}
-.bb:disabled{background:#151515;color:#333}
+/* === BUTTONS === */
+.btn { padding:13px 20px; border-radius:12px; border:none; font-weight:600; font-size:0.8rem; cursor:pointer; text-align:center; }
+.btn:active { transform:scale(0.96); }
+.btn-w { background:#fff; color:#000; }
+.btn-b { background:#3b82f6; color:#fff; }
+.btn-b:disabled { background:#1a1a1a; color:#333; }
 
-/* CAMERA */
-#sCam{background:#000}
-#sCam video{width:100%;height:100%;object-fit:cover}
-.ctop{position:absolute;top:0;left:0;right:0;padding:max(env(safe-area-inset-top),8px) 12px 8px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(rgba(0,0,0,.6),transparent);z-index:5}
-.ctop h3{font-size:.72rem}
-.cpill{display:flex;gap:6px}
-.cico{width:34px;height:34px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;backdrop-filter:blur(4px)}
-.cico.off{background:rgba(255,255,255,.1);color:#aaa}
-.cico.act{background:#f59e0b;color:#000}
-.cico.hide{display:none}
-/* Guide rectangle on camera */
-.cguide{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:2}
-.cguide-rect{width:86%;max-width:370px;aspect-ratio:210/297;border:2px solid rgba(59,130,246,.5);border-radius:6px;position:relative;box-shadow:0 0 0 2000px rgba(0,0,0,.3)}
-.cguide-corner{position:absolute;width:18px;height:18px;border-color:#3b82f6;border-style:solid;border-width:0}
-.cguide-corner.tl{top:-1px;left:-1px;border-top-width:3px;border-left-width:3px;border-radius:4px 0 0 0}
-.cguide-corner.tr{top:-1px;right:-1px;border-top-width:3px;border-right-width:3px;border-radius:0 4px 0 0}
-.cguide-corner.br{bottom:-1px;right:-1px;border-bottom-width:3px;border-right-width:3px;border-radius:0 0 4px 0}
-.cguide-corner.bl{bottom:-1px;left:-1px;border-bottom-width:3px;border-left-width:3px;border-radius:0 0 0 4px}
-.chint{position:absolute;bottom:100px;left:0;right:0;text-align:center;font-size:.64rem;color:rgba(255,255,255,.45);z-index:5}
-.cbtm{position:absolute;bottom:0;left:0;right:0;padding:18px;padding-bottom:max(18px,env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:center;background:linear-gradient(transparent,rgba(0,0,0,.4));z-index:5}
-.shut{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:transparent;cursor:pointer;position:relative}
-.shut::after{content:'';position:absolute;inset:4px;border-radius:50%;background:#fff}
-.shut:active{transform:scale(.88)}
-.cflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3;transition:opacity .06s}
-.cflash.pop{opacity:.5}
+/* === CONFIG SCREEN === */
+#configScreen { justify-content:center; align-items:center; padding:24px; z-index:90; }
+.config-box { width:100%; max-width:340px; text-align:center; }
+.config-box h2 { font-size:1rem; color:#3b82f6; margin-bottom:8px; }
+.config-box p { font-size:0.7rem; color:#666; margin-bottom:16px; line-height:1.5; }
+.config-box input { width:100%; padding:13px; border-radius:10px; border:1px solid #333; background:#111; color:#fff; font-size:0.72rem; font-family:monospace; margin-bottom:12px; }
 
-/* CROP */
-.crh{display:flex;justify-content:space-between;align-items:center;padding:max(env(safe-area-inset-top),8px) 12px 6px;border-bottom:1px solid #151515}
-.crh h3{font-size:.75rem}
-.crh span{font-size:.5rem;color:#555}
-.xb{background:#1a1a1a;border:none;color:#fff;width:28px;height:28px;border-radius:7px;font-size:.8rem;cursor:pointer}
-.crarea{flex:1;position:relative;overflow:hidden;touch-action:none}
-.crarea canvas{position:absolute;top:0;left:0;width:100%;height:100%}
-.crbar{padding:7px 10px;padding-bottom:max(7px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:7px}
-.crbar .btn{padding:11px;font-size:.72rem}
+/* === HOME SCREEN === */
+.home-header { padding:12px 14px 8px; text-align:center; border-bottom:1px solid #151515; }
+.home-header h1 { font-size:0.85rem; font-weight:700; letter-spacing:1.5px; color:#3b82f6; }
+.home-header small { font-size:0.5rem; color:#444; letter-spacing:2px; }
+.home-stats { display:flex; justify-content:center; gap:18px; padding:6px; font-size:0.63rem; color:#444; }
+.home-stats b { color:#fff; }
+.home-feed { flex:1; overflow-y:auto; padding:10px 12px 115px; }
+.home-empty { text-align:center; padding:30px 16px; color:#333; }
+.home-empty p { font-size:0.72rem; line-height:1.5; margin-top:8px; }
+.home-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.home-card { position:relative; border-radius:10px; overflow:hidden; background:#0a0a0a; border:1px solid #1a1a1a; }
+.home-card img { width:100%; aspect-ratio:3/4; object-fit:cover; display:block; }
+.home-card .badge { position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:4px; font-size:0.5rem; color:#3b82f6; font-weight:600; }
+.home-card .remove { position:absolute; top:4px; right:4px; width:22px; height:22px; background:rgba(220,40,40,0.85); border:none; border-radius:50%; color:#fff; font-size:0.6rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.home-bar { position:fixed; bottom:0; left:0; right:0; padding:10px 12px; padding-bottom:max(10px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, #000 25%); display:flex; gap:8px; z-index:10; }
+.home-bar .btn { flex:1; }
 
-/* PREVIEW */
-.pvimg{flex:1;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;background:#0a0a0a}
-.pvimg img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.pvbar{padding:7px 10px;padding-bottom:max(7px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:7px}
-.pvbar .btn{padding:11px;font-size:.72rem}
-/* Scan mode toggle */
-.pvmode{display:flex;justify-content:center;gap:6px;padding:8px;border-bottom:1px solid #151515}
-.pvmode button{padding:7px 14px;border-radius:8px;border:1px solid #252525;background:#0a0a0a;color:#666;font-size:.65rem;font-weight:600;cursor:pointer;font-family:inherit}
-.pvmode button.on{background:#3b82f6;border-color:#3b82f6;color:#fff}
+/* === CAMERA SCREEN === */
+#camScreen video { width:100%; height:100%; object-fit:cover; }
+.cam-overlay { position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+.cam-guide { width:86%; max-width:360px; aspect-ratio:210/297; border:2px solid rgba(59,130,246,0.5); border-radius:6px; box-shadow:0 0 0 3000px rgba(0,0,0,0.35); position:relative; }
+.cam-corner { position:absolute; width:20px; height:20px; }
+.cam-corner.tl { top:-2px; left:-2px; border-top:3px solid #3b82f6; border-left:3px solid #3b82f6; border-radius:5px 0 0 0; }
+.cam-corner.tr { top:-2px; right:-2px; border-top:3px solid #3b82f6; border-right:3px solid #3b82f6; border-radius:0 5px 0 0; }
+.cam-corner.br { bottom:-2px; right:-2px; border-bottom:3px solid #3b82f6; border-right:3px solid #3b82f6; border-radius:0 0 5px 0; }
+.cam-corner.bl { bottom:-2px; left:-2px; border-bottom:3px solid #3b82f6; border-left:3px solid #3b82f6; border-radius:0 0 0 5px; }
+.cam-topbar { position:absolute; top:0; left:0; right:0; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(rgba(0,0,0,0.6), transparent); z-index:5; }
+.cam-topbar h3 { font-size:0.75rem; }
+.cam-icons { display:flex; gap:8px; }
+.cam-icon { width:36px; height:36px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:1rem; cursor:pointer; backdrop-filter:blur(4px); }
+.cam-icon-off { background:rgba(255,255,255,0.12); color:#aaa; }
+.cam-icon-on { background:#f59e0b; color:#000; }
+.cam-bottom { position:absolute; bottom:0; left:0; right:0; padding:12px 20px; padding-bottom:max(16px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, rgba(0,0,0,0.5)); z-index:5; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.cam-hint { font-size:0.62rem; color:rgba(255,255,255,0.4); }
+/* Zoom slider */
+.cam-zoom { display:flex; align-items:center; gap:8px; width:70%; max-width:250px; }
+.cam-zoom label { font-size:0.6rem; color:#aaa; }
+.cam-zoom input[type=range] { flex:1; -webkit-appearance:none; height:3px; background:#333; border-radius:2px; outline:none; }
+.cam-zoom input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#3b82f6; border:2px solid #fff; }
+.shutter-btn { width:64px; height:64px; border-radius:50%; border:4px solid #fff; background:transparent; cursor:pointer; position:relative; }
+.shutter-btn::after { content:''; position:absolute; inset:4px; border-radius:50%; background:#fff; }
+.shutter-btn:active { transform:scale(0.88); }
+.cam-flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:3; }
 
-/* OVERLAY + TOAST */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
-.ov.on{opacity:1;pointer-events:all}
-.sp{width:36px;height:36px;border:3px solid #1a1a1a;border-top-color:#3b82f6;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ov p{margin-top:12px;font-size:.7rem;color:#555}
-.toast{position:fixed;top:max(env(safe-area-inset-top),8px);left:10px;right:10px;padding:9px 12px;border-radius:9px;font-weight:600;font-size:.7rem;text-align:center;z-index:300;transform:translateY(-120%);transition:transform .3s cubic-bezier(.34,1.4,.64,1)}
-.toast.on{transform:translateY(0)}.toast.ok{background:#22c55e;color:#000}.toast.er{background:#ef4444;color:#fff}
+/* === CROP SCREEN === */
+.crop-header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid #151515; }
+.crop-header h3 { font-size:0.78rem; }
+.crop-header span { font-size:0.52rem; color:#555; }
+.close-btn { background:#1a1a1a; border:none; color:#fff; width:30px; height:30px; border-radius:8px; font-size:0.85rem; cursor:pointer; }
+.crop-canvas-wrap { flex:1; position:relative; overflow:hidden; touch-action:none; }
+.crop-canvas-wrap canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+.crop-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
+.crop-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
+
+/* === PREVIEW SCREEN === */
+.prev-modes { display:flex; justify-content:center; gap:6px; padding:8px; border-bottom:1px solid #151515; }
+.prev-mode-btn { padding:7px 14px; border-radius:8px; border:1px solid #252525; background:#0a0a0a; color:#666; font-size:0.65rem; font-weight:600; cursor:pointer; font-family:inherit; }
+.prev-mode-btn.active { background:#3b82f6; border-color:#3b82f6; color:#fff; }
+.prev-image { flex:1; display:flex; align-items:center; justify-content:center; padding:10px; overflow:hidden; background:#0a0a0a; }
+.prev-image img { max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+.prev-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
+.prev-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
+
+/* === OVERLAY + TOAST === */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.overlay.active { opacity:1; pointer-events:all; }
+.spinner { width:36px; height:36px; border:3px solid #1a1a1a; border-top-color:#3b82f6; border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.overlay p { margin-top:12px; font-size:0.72rem; color:#555; }
+.toast { position:fixed; top:12px; left:12px; right:12px; padding:10px 14px; border-radius:10px; font-weight:600; font-size:0.72rem; text-align:center; z-index:300; transform:translateY(-120%); transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1); }
+.toast.visible { transform:translateY(0); }
+.toast-ok { background:#22c55e; color:#000; }
+.toast-err { background:#ef4444; color:#fff; }
 </style>
 </head>
 <body>
 
-<!-- CONFIG -->
-<div class="S" id="sCfg"><div class="cfg"><h2>⚙️ Configuration</h2><p>Colle l'URL de ton Google Apps Script</p><input id="cfgIn" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn bb" onclick="saveCfg()" style="width:100%">Valider</button></div></div>
-
-<!-- HOME -->
-<div class="S on" id="sHome">
-  <div class="hdr"><h1>VAZYGOOD SCANNER</h1><sub>SCAN PRO · DRIVE</sub></div>
-  <div class="sts">PAGES <b id="pc">0</b>&nbsp;&nbsp;TAILLE <b id="ts">0 KB</b></div>
-  <div class="feed">
-    <div id="emp" class="emp"><span style="font-size:2rem">📄</span><p>Scanne tes factures.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p></div>
-    <div class="grd" id="grd"></div>
-  </div>
-  <div class="bar"><button class="btn bw" onclick="openCam()">📸 Scanner</button><button class="btn bb" id="sBtn" disabled onclick="doSend()">🚀 Envoyer</button></div>
-</div>
-
-<!-- CAMERA -->
-<div class="S" id="sCam">
-  <video id="vid" autoplay playsinline muted></video>
-  <div class="cguide"><div class="cguide-rect"><div class="cguide-corner tl"></div><div class="cguide-corner tr"></div><div class="cguide-corner br"></div><div class="cguide-corner bl"></div></div></div>
-  <div class="ctop"><h3>📷 Scanner</h3><div class="cpill"><button class="cico off hide" id="tBtn" onclick="togTorch()">🔦</button><button class="cico off" onclick="closeCam()">✕</button></div></div>
-  <div class="chint">Cadre la facture dans le rectangle</div>
-  <div class="cbtm"><button class="shut" onclick="snap()"></button></div>
-  <div class="cflash" id="fl"></div>
-</div>
-
-<!-- CROP -->
-<div class="S" id="sCrop">
-  <div class="crh"><div><h3>Recadrer le document</h3><span>Déplace les 4 coins</span></div><button class="xb" onclick="backToCam()">✕</button></div>
-  <div class="crarea" id="crA"><canvas id="crC"></canvas></div>
-  <div class="crbar">
-    <button class="btn bw" onclick="backToCam()" style="flex:.3">Annuler</button>
-    <button class="btn bw" onclick="rstC()" style="flex:.2">↺</button>
-    <button class="btn bb" onclick="doCrop()">Recadrer ✓</button>
+<!-- ========== CONFIG ========== -->
+<div class="screen" id="configScreen">
+  <div class="config-box">
+    <h2>⚙️ Configuration</h2>
+    <p>Colle l'URL de ton Google Apps Script</p>
+    <input id="configInput" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="btn btn-b" onclick="saveConfig()" style="width:100%">Valider</button>
   </div>
 </div>
 
-<!-- PREVIEW -->
-<div class="S" id="sPrev">
-  <div class="crh"><h3>Aperçu</h3><button class="xb" onclick="backToCam()">✕</button></div>
-  <div class="pvmode">
-    <button class="on" id="mScan" onclick="setMode('scan')">📄 Scanner</button>
-    <button id="mColor" onclick="setMode('color')">🎨 Couleur</button>
-    <button id="mGray" onclick="setMode('gray')">⚫ Gris</button>
+<!-- ========== HOME ========== -->
+<div class="screen active" id="homeScreen">
+  <div class="home-header">
+    <h1>VAZYGOOD SCANNER</h1>
+    <small>SCAN PRO · DRIVE</small>
   </div>
-  <div class="pvimg"><img id="pvI"></div>
-  <div class="pvbar">
-    <button class="btn bw" onclick="backToCam()" style="flex:.35">↺ Refaire</button>
-    <button class="btn bb" onclick="confirmPg()">Ajouter ✓</button>
+  <div class="home-stats">
+    PAGES <b id="pageCount">0</b>&nbsp;&nbsp;TAILLE <b id="totalSize">0 KB</b>
+  </div>
+  <div class="home-feed">
+    <div id="emptyState" class="home-empty">
+      <div style="font-size:2rem">📄</div>
+      <p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p>
+    </div>
+    <div class="home-grid" id="gallery"></div>
+  </div>
+  <div class="home-bar">
+    <button class="btn btn-w" onclick="openCamera()">📸 Scanner</button>
+    <button class="btn btn-b" id="sendButton" disabled onclick="sendPages()">🚀 Envoyer</button>
   </div>
 </div>
 
-<div class="ov" id="ov"><div class="sp"></div><p id="ovt"></p></div>
-<div class="toast" id="toast"></div>
+<!-- ========== CAMERA ========== -->
+<div class="screen" id="camScreen">
+  <video id="videoEl" autoplay playsinline muted></video>
+  <div class="cam-overlay">
+    <div class="cam-guide">
+      <div class="cam-corner tl"></div>
+      <div class="cam-corner tr"></div>
+      <div class="cam-corner br"></div>
+      <div class="cam-corner bl"></div>
+    </div>
+  </div>
+  <div class="cam-topbar">
+    <h3>📷 Scanner</h3>
+    <div class="cam-icons">
+      <button class="cam-icon cam-icon-off" id="flashBtn" onclick="toggleFlash()" style="display:none">🔦</button>
+      <button class="cam-icon cam-icon-off" onclick="closeCamera()">✕</button>
+    </div>
+  </div>
+  <div class="cam-bottom">
+    <div class="cam-zoom" id="zoomRow" style="display:none">
+      <label>1x</label>
+      <input type="range" id="zoomSlider" min="1" max="5" step="0.1" value="1" oninput="applyZoom(this.value)">
+      <label id="zoomLabel">1x</label>
+    </div>
+    <div class="cam-hint">Cadre la facture dans le rectangle</div>
+    <button class="shutter-btn" onclick="takePhoto()"></button>
+  </div>
+  <div class="cam-flash" id="flashOverlay"></div>
+</div>
+
+<!-- ========== CROP ========== -->
+<div class="screen" id="cropScreen">
+  <div class="crop-header">
+    <div>
+      <h3>Recadrer le document</h3>
+      <span>Déplace les 4 coins pour ajuster</span>
+    </div>
+    <button class="close-btn" onclick="cancelCrop()">✕</button>
+  </div>
+  <div class="crop-canvas-wrap" id="cropArea">
+    <canvas id="cropCanvas"></canvas>
+  </div>
+  <div class="crop-bar">
+    <button class="btn btn-w" onclick="cancelCrop()">Annuler</button>
+    <button class="btn btn-w" onclick="resetCorners()">↺ Reset</button>
+    <button class="btn btn-b" onclick="processCrop()">Valider ✓</button>
+  </div>
+</div>
+
+<!-- ========== PREVIEW ========== -->
+<div class="screen" id="prevScreen">
+  <div class="crop-header">
+    <h3>Aperçu du scan</h3>
+    <button class="close-btn" onclick="goBackToCamera()">✕</button>
+  </div>
+  <div class="prev-modes">
+    <button class="prev-mode-btn active" id="modeScan" onclick="switchMode('scan')">📄 Scanner</button>
+    <button class="prev-mode-btn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button>
+    <button class="prev-mode-btn" id="modeGray" onclick="switchMode('gray')">⚫ Gris</button>
+  </div>
+  <div class="prev-image">
+    <img id="previewImg" alt="Aperçu">
+  </div>
+  <div class="prev-bar">
+    <button class="btn btn-w" onclick="goBackToCamera()">↺ Refaire</button>
+    <button class="btn btn-b" onclick="addPage()">Ajouter ✓</button>
+  </div>
+</div>
+
+<!-- OVERLAY & TOAST -->
+<div class="overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p id="loadingText"></p>
+</div>
+<div class="toast" id="toastEl"></div>
 
 <script>
-/* === CONFIG === */
-var GAS=localStorage.getItem('gas_url')||'';
-if(!GAS)sw('sCfg');
-function saveCfg(){var u=document.getElementById('cfgIn').value.trim();if(!u.startsWith('https://')){msg("URL invalide",1);return;}GAS=u;localStorage.setItem('gas_url',u);sw('sHome');msg("OK ✓");}
-function sw(id){document.querySelectorAll('.S').forEach(s=>s.classList.toggle('on',s.id===id));}
+/* =============================================
+   CONFIGURATION
+   ============================================= */
+var GAS_URL = localStorage.getItem('gas_url') || '';
+if (!GAS_URL) {
+  showScreen('configScreen');
+}
 
-/* === STATE === */
-var pages=[];       // {scanURL, colorB64, mime, size}
-var stream=null, vTrack=null, torchOn=false, torchOK=false;
-var srcImg=null, corners=[], dW,dH,oX,oY, dragI=-1, HR=20;
-// After crop: 3 versions
-var colorURL='', scanURL='', grayURL='', colorB64='', curMode='scan';
+function saveConfig() {
+  var url = document.getElementById('configInput').value.trim();
+  if (!url || url.indexOf('https://') !== 0) {
+    showToast("URL invalide", true);
+    return;
+  }
+  GAS_URL = url;
+  localStorage.setItem('gas_url', url);
+  showScreen('homeScreen');
+  showToast("Configuré ✓", false);
+}
 
-/* ============================================
+/* =============================================
+   NAVIGATION
+   ============================================= */
+function showScreen(screenId) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    if (screens[i].id === screenId) {
+      screens[i].classList.add('active');
+    } else {
+      screens[i].classList.remove('active');
+    }
+  }
+}
+
+/* =============================================
+   STATE
+   ============================================= */
+var pages = [];
+var cameraStream = null;
+var videoTrack = null;
+var torchActive = false;
+var torchSupported = false;
+var zoomSupported = false;
+var zoomMin = 1;
+var zoomMax = 1;
+
+var capturedImage = null;
+var cropCorners = [];
+var cropDisplayW = 0;
+var cropDisplayH = 0;
+var cropOffsetX = 0;
+var cropOffsetY = 0;
+var draggingCorner = -1;
+var HANDLE_RADIUS = 22;
+
+var resultScanURL = '';
+var resultColorURL = '';
+var resultGrayURL = '';
+var resultColorB64 = '';
+var currentMode = 'scan';
+
+/* =============================================
    CAMERA
-   ============================================ */
-function openCam(){
-  if(!GAS){sw('sCfg');return;}
-  sw('sCam');torchOn=false;
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1440}},audio:false})
-    .then(s=>{
-      stream=s; vTrack=s.getVideoTracks()[0];
-      document.getElementById('vid').srcObject=s;
-      // Check torch capability
-      setTimeout(()=>{
-        try{
-          var cap=vTrack.getCapabilities();
-          torchOK=!!(cap&&cap.torch);
-        }catch(e){torchOK=false;}
-        document.getElementById('tBtn').classList.toggle('hide',!torchOK);
-      },500);
-    })
-    .catch(e=>{sw('sHome');msg("Caméra: "+e.message,1);});
-}
-function closeCam(){killCam();sw('sHome');}
-function backToCam(){sw('sCam');/* camera still running */}
-function killCam(){
-  if(torchOn)togTorch();
-  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;vTrack=null;}
-  document.getElementById('vid').srcObject=null;
-}
+   ============================================= */
+function openCamera() {
+  if (!GAS_URL) {
+    showScreen('configScreen');
+    return;
+  }
+  showScreen('camScreen');
+  torchActive = false;
+  updateFlashButton();
 
-function togTorch(){
-  if(!vTrack||!torchOK)return;
-  torchOn=!torchOn;
-  try{vTrack.applyConstraints({advanced:[{torch:torchOn}]});}catch(e){torchOn=false;}
-  var b=document.getElementById('tBtn');
-  b.classList.toggle('act',torchOn);b.classList.toggle('off',!torchOn);
-}
+  var video = document.getElementById('videoEl');
 
-function snap(){
-  var v=document.getElementById('vid');if(!v.videoWidth)return;
-  var f=document.getElementById('fl');f.classList.add('pop');setTimeout(()=>f.classList.remove('pop'),120);
-  var c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;
-  c.getContext('2d').drawImage(v,0,0);
-  srcImg=new Image();
-  srcImg.onload=()=>{sw('sCrop');openCropView();};
-  srcImg.src=c.toDataURL('image/jpeg',.92);
-}
+  navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: 'environment',
+      width: { ideal: 1920 },
+      height: { ideal: 1440 }
+    },
+    audio: false
+  })
+  .then(function(stream) {
+    cameraStream = stream;
+    videoTrack = stream.getVideoTracks()[0];
+    video.srcObject = stream;
 
-/* ============================================
-   CROP — 4 coins draggables
-   ============================================ */
-function openCropView(){
-  requestAnimationFrame(()=>{
-    var area=document.getElementById('crA'),cv=document.getElementById('crC');
-    cv.width=area.clientWidth;cv.height=area.clientHeight;
-    var iw=srcImg.naturalWidth,ih=srcImg.naturalHeight;
-    var sc=Math.min(cv.width/iw,cv.height/ih);
-    dW=Math.round(iw*sc);dH=Math.round(ih*sc);
-    oX=Math.round((cv.width-dW)/2);oY=Math.round((cv.height-dH)/2);
-    // Default: 5% margin (user adjusts)
-    var m=.05;
-    corners=[{x:Math.round(iw*m),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*(1-m))},{x:Math.round(iw*m),y:Math.round(ih*(1-m))}];
-    drawCr();bindCr(cv);
+    // Wait for track to be ready then check capabilities
+    setTimeout(function() {
+      checkCameraCapabilities();
+    }, 800);
+  })
+  .catch(function(err) {
+    showScreen('homeScreen');
+    showToast("Caméra: " + err.message, true);
   });
 }
-function rstC(){var iw=srcImg.naturalWidth,ih=srcImg.naturalHeight,m=.03;corners=[{x:Math.round(iw*m),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*(1-m))},{x:Math.round(iw*m),y:Math.round(ih*(1-m))}];drawCr();}
 
-function drawCr(){
-  var cv=document.getElementById('crC'),cx=cv.getContext('2d');
-  var iw=srcImg.naturalWidth,ih=srcImg.naturalHeight,sx=dW/iw,sy=dH/ih;
-  cx.clearRect(0,0,cv.width,cv.height);
-  cx.drawImage(srcImg,oX,oY,dW,dH);
-  // Darken outside
-  cx.fillStyle='rgba(0,0,0,0.5)';cx.fillRect(0,0,cv.width,cv.height);
+function checkCameraCapabilities() {
+  if (!videoTrack) return;
+
+  try {
+    var caps = videoTrack.getCapabilities();
+
+    // Flash/Torch
+    if (caps && caps.torch) {
+      torchSupported = true;
+      document.getElementById('flashBtn').style.display = 'flex';
+    } else {
+      torchSupported = false;
+      document.getElementById('flashBtn').style.display = 'none';
+    }
+
+    // Zoom
+    if (caps && caps.zoom) {
+      zoomSupported = true;
+      zoomMin = caps.zoom.min || 1;
+      zoomMax = caps.zoom.max || 1;
+      if (zoomMax > 1) {
+        document.getElementById('zoomRow').style.display = 'flex';
+        var slider = document.getElementById('zoomSlider');
+        slider.min = zoomMin;
+        slider.max = Math.min(zoomMax, 8);
+        slider.value = zoomMin;
+        document.getElementById('zoomLabel').textContent = '1x';
+      }
+    } else {
+      zoomSupported = false;
+      document.getElementById('zoomRow').style.display = 'none';
+    }
+  } catch (e) {
+    torchSupported = false;
+    zoomSupported = false;
+    document.getElementById('flashBtn').style.display = 'none';
+    document.getElementById('zoomRow').style.display = 'none';
+  }
+}
+
+function closeCamera() {
+  stopCamera();
+  showScreen('homeScreen');
+}
+
+function stopCamera() {
+  if (torchActive) {
+    toggleFlash();
+  }
+  if (cameraStream) {
+    var tracks = cameraStream.getTracks();
+    for (var i = 0; i < tracks.length; i++) {
+      tracks[i].stop();
+    }
+    cameraStream = null;
+    videoTrack = null;
+  }
+  document.getElementById('videoEl').srcObject = null;
+}
+
+function goBackToCamera() {
+  showScreen('camScreen');
+}
+
+/* --- FLASH --- */
+function toggleFlash() {
+  if (!videoTrack || !torchSupported) return;
+  torchActive = !torchActive;
+  try {
+    videoTrack.applyConstraints({ advanced: [{ torch: torchActive }] });
+  } catch (e) {
+    torchActive = false;
+  }
+  updateFlashButton();
+}
+
+function updateFlashButton() {
+  var btn = document.getElementById('flashBtn');
+  if (torchActive) {
+    btn.className = 'cam-icon cam-icon-on';
+  } else {
+    btn.className = 'cam-icon cam-icon-off';
+  }
+}
+
+/* --- ZOOM --- */
+function applyZoom(val) {
+  if (!videoTrack || !zoomSupported) return;
+  var zoomVal = parseFloat(val);
+  try {
+    videoTrack.applyConstraints({ advanced: [{ zoom: zoomVal }] });
+  } catch (e) {}
+  document.getElementById('zoomLabel').textContent = zoomVal.toFixed(1) + 'x';
+}
+
+/* --- PHOTO --- */
+function takePhoto() {
+  var video = document.getElementById('videoEl');
+  if (!video.videoWidth) return;
+
+  // Flash animation
+  var flash = document.getElementById('flashOverlay');
+  flash.style.opacity = '0.5';
+  setTimeout(function() { flash.style.opacity = '0'; }, 120);
+
+  // Capture frame
+  var canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+
+  var dataURL = canvas.toDataURL('image/jpeg', 0.92);
+  capturedImage = new Image();
+  capturedImage.onload = function() {
+    showScreen('cropScreen');
+    initCropView();
+  };
+  capturedImage.src = dataURL;
+}
+
+/* =============================================
+   CROP
+   ============================================= */
+function initCropView() {
+  requestAnimationFrame(function() {
+    var area = document.getElementById('cropArea');
+    var cv = document.getElementById('cropCanvas');
+    cv.width = area.clientWidth;
+    cv.height = area.clientHeight;
+
+    var iw = capturedImage.naturalWidth;
+    var ih = capturedImage.naturalHeight;
+    var scale = Math.min(cv.width / iw, cv.height / ih);
+    cropDisplayW = Math.round(iw * scale);
+    cropDisplayH = Math.round(ih * scale);
+    cropOffsetX = Math.round((cv.width - cropDisplayW) / 2);
+    cropOffsetY = Math.round((cv.height - cropDisplayH) / 2);
+
+    // Default corners at 5% margin
+    var margin = 0.05;
+    cropCorners = [
+      { x: Math.round(iw * margin), y: Math.round(ih * margin) },
+      { x: Math.round(iw * (1 - margin)), y: Math.round(ih * margin) },
+      { x: Math.round(iw * (1 - margin)), y: Math.round(ih * (1 - margin)) },
+      { x: Math.round(iw * margin), y: Math.round(ih * (1 - margin)) }
+    ];
+
+    drawCropOverlay();
+    setupCropTouch(cv);
+  });
+}
+
+function resetCorners() {
+  var iw = capturedImage.naturalWidth;
+  var ih = capturedImage.naturalHeight;
+  var m = 0.03;
+  cropCorners = [
+    { x: Math.round(iw * m), y: Math.round(ih * m) },
+    { x: Math.round(iw * (1 - m)), y: Math.round(ih * m) },
+    { x: Math.round(iw * (1 - m)), y: Math.round(ih * (1 - m)) },
+    { x: Math.round(iw * m), y: Math.round(ih * (1 - m)) }
+  ];
+  drawCropOverlay();
+}
+
+function cancelCrop() {
+  showScreen('camScreen');
+}
+
+function drawCropOverlay() {
+  var cv = document.getElementById('cropCanvas');
+  var ctx = cv.getContext('2d');
+  var iw = capturedImage.naturalWidth;
+  var ih = capturedImage.naturalHeight;
+  var sx = cropDisplayW / iw;
+  var sy = cropDisplayH / ih;
+
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Draw image
+  ctx.drawImage(capturedImage, cropOffsetX, cropOffsetY, cropDisplayW, cropDisplayH);
+
+  // Dark overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
   // Bright crop zone
-  cx.save();cx.beginPath();
-  corners.forEach((c,i)=>{var px=oX+c.x*sx,py=oY+c.y*sy;i?cx.lineTo(px,py):cx.moveTo(px,py);});
-  cx.closePath();cx.clip();cx.drawImage(srcImg,oX,oY,dW,dH);cx.restore();
-  // Lines + handles
-  cx.strokeStyle='#3b82f6';cx.lineWidth=2;cx.beginPath();
-  corners.forEach((c,i)=>{var px=oX+c.x*sx,py=oY+c.y*sy;i?cx.lineTo(px,py):cx.moveTo(px,py);});
-  cx.closePath();cx.stroke();
-  corners.forEach(c=>{
-    var px=oX+c.x*sx,py=oY+c.y*sy;
-    cx.beginPath();cx.arc(px,py,HR,0,Math.PI*2);cx.fillStyle='#3b82f6';cx.fill();
-    cx.strokeStyle='#fff';cx.lineWidth=2;cx.stroke();
-    cx.beginPath();cx.arc(px,py,3,0,Math.PI*2);cx.fillStyle='#fff';cx.fill();
-  });
+  ctx.save();
+  ctx.beginPath();
+  for (var i = 0; i < 4; i++) {
+    var px = cropOffsetX + cropCorners[i].x * sx;
+    var py = cropOffsetY + cropCorners[i].y * sy;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(capturedImage, cropOffsetX, cropOffsetY, cropDisplayW, cropDisplayH);
+  ctx.restore();
+
+  // Blue border
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (var i = 0; i < 4; i++) {
+    var px = cropOffsetX + cropCorners[i].x * sx;
+    var py = cropOffsetY + cropCorners[i].y * sy;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // Corner handles
+  for (var i = 0; i < 4; i++) {
+    var px = cropOffsetX + cropCorners[i].x * sx;
+    var py = cropOffsetY + cropCorners[i].y * sy;
+
+    ctx.beginPath();
+    ctx.arc(px, py, HANDLE_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = '#3b82f6';
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
 }
 
-function bindCr(cv){
-  var iw=srcImg.naturalWidth,ih=srcImg.naturalHeight,sx=dW/iw,sy=dH/ih;
-  function pos(e){var r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
-  function hit(p){for(var i=0;i<4;i++){var cx2=oX+corners[i].x*sx,cy2=oY+corners[i].y*sy;if(Math.hypot(p.x-cx2,p.y-cy2)<HR*2.5)return i;}return-1;}
-  cv.ontouchstart=cv.onmousedown=e=>{e.preventDefault();dragI=hit(pos(e));};
-  cv.ontouchmove=cv.onmousemove=e=>{if(dragI<0)return;e.preventDefault();var p=pos(e);corners[dragI].x=Math.max(0,Math.min(iw,Math.round((p.x-oX)/sx)));corners[dragI].y=Math.max(0,Math.min(ih,Math.round((p.y-oY)/sy)));drawCr();};
-  cv.ontouchend=cv.onmouseup=()=>{dragI=-1;};
+function setupCropTouch(cv) {
+  var iw = capturedImage.naturalWidth;
+  var ih = capturedImage.naturalHeight;
+  var sx = cropDisplayW / iw;
+  var sy = cropDisplayH / ih;
+
+  function getPos(e) {
+    var rect = cv.getBoundingClientRect();
+    var touch = e.touches ? e.touches[0] : e;
+    return {
+      x: (touch.clientX - rect.left) * (cv.width / rect.width),
+      y: (touch.clientY - rect.top) * (cv.height / rect.height)
+    };
+  }
+
+  function findCorner(p) {
+    for (var i = 0; i < 4; i++) {
+      var cx = cropOffsetX + cropCorners[i].x * sx;
+      var cy = cropOffsetY + cropCorners[i].y * sy;
+      var dist = Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2));
+      if (dist < HANDLE_RADIUS * 2.5) return i;
+    }
+    return -1;
+  }
+
+  cv.ontouchstart = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
+  cv.onmousedown = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
+
+  cv.ontouchmove = function(e) {
+    if (draggingCorner < 0) return;
+    e.preventDefault();
+    var p = getPos(e);
+    cropCorners[draggingCorner].x = Math.max(0, Math.min(iw, Math.round((p.x - cropOffsetX) / sx)));
+    cropCorners[draggingCorner].y = Math.max(0, Math.min(ih, Math.round((p.y - cropOffsetY) / sy)));
+    drawCropOverlay();
+  };
+  cv.onmousemove = cv.ontouchmove;
+
+  cv.ontouchend = function() { draggingCorner = -1; };
+  cv.onmouseup = function() { draggingCorner = -1; };
 }
 
-/* ============================================
-   PERSPECTIVE WARP → 3 RENDUS
-   ============================================ */
-function doCrop(){
-  if(!srcImg||corners.length<4)return;
-  showOv("Traitement...");
-  setTimeout(()=>{
-    try{
-      var tl=corners[0],tr=corners[1],br=corners[2],bl=corners[3];
-      var ow=Math.round(Math.max(Math.hypot(tr.x-tl.x,tr.y-tl.y),Math.hypot(br.x-bl.x,br.y-bl.y)));
-      var oh=Math.round(Math.max(Math.hypot(bl.x-tl.x,bl.y-tl.y),Math.hypot(br.x-tr.x,br.y-tr.y)));
-      var M=2200;if(ow>M){oh=Math.round(oh*M/ow);ow=M;}if(oh>M){ow=Math.round(ow*M/oh);oh=M;}
-      // Source
-      var sc=document.createElement('canvas');sc.width=srcImg.naturalWidth;sc.height=srcImg.naturalHeight;
-      sc.getContext('2d').drawImage(srcImg,0,0);
-      var sd=sc.getContext('2d').getImageData(0,0,sc.width,sc.height).data;
-      var sw=sc.width,sh=sc.height;
+/* =============================================
+   PERSPECTIVE WARP + 3 RENDUS
+   ============================================= */
+function processCrop() {
+  if (!capturedImage || cropCorners.length < 4) return;
+  showLoading("Traitement du scan...");
+
+  setTimeout(function() {
+    try {
+      var tl = cropCorners[0], tr = cropCorners[1], br = cropCorners[2], bl = cropCorners[3];
+
+      // Output dimensions
+      var wTop = Math.sqrt(Math.pow(tr.x - tl.x, 2) + Math.pow(tr.y - tl.y, 2));
+      var wBot = Math.sqrt(Math.pow(br.x - bl.x, 2) + Math.pow(br.y - bl.y, 2));
+      var hLeft = Math.sqrt(Math.pow(bl.x - tl.x, 2) + Math.pow(bl.y - tl.y, 2));
+      var hRight = Math.sqrt(Math.pow(br.x - tr.x, 2) + Math.pow(br.y - tr.y, 2));
+      var outW = Math.round(Math.max(wTop, wBot));
+      var outH = Math.round(Math.max(hLeft, hRight));
+      var MAX = 2200;
+      if (outW > MAX) { outH = Math.round(outH * MAX / outW); outW = MAX; }
+      if (outH > MAX) { outW = Math.round(outW * MAX / outH); outH = MAX; }
+
+      // Get source pixels
+      var srcCanvas = document.createElement('canvas');
+      srcCanvas.width = capturedImage.naturalWidth;
+      srcCanvas.height = capturedImage.naturalHeight;
+      var srcCtx = srcCanvas.getContext('2d');
+      srcCtx.drawImage(capturedImage, 0, 0);
+      var srcData = srcCtx.getImageData(0, 0, srcCanvas.width, srcCanvas.height).data;
+      var srcW = srcCanvas.width;
+      var srcH = srcCanvas.height;
+
       // Warp
-      var oc=document.createElement('canvas');oc.width=ow;oc.height=oh;
-      var octx=oc.getContext('2d'),od=octx.createImageData(ow,oh),px=od.data;
-      for(var y=0;y<oh;y++){var v=y/Math.max(1,oh-1);for(var x=0;x<ow;x++){var u=x/Math.max(1,ow-1);
-        var sX=(1-u)*(1-v)*tl.x+u*(1-v)*tr.x+u*v*br.x+(1-u)*v*bl.x;
-        var sY=(1-u)*(1-v)*tl.y+u*(1-v)*tr.y+u*v*br.y+(1-u)*v*bl.y;
-        var fx=Math.floor(sX),fy=Math.floor(sY),cx2=Math.min(fx+1,sw-1),cy2=Math.min(fy+1,sh-1);
-        fx=Math.max(0,fx);fy=Math.max(0,fy);var dx=sX-fx,dy=sY-fy;var oi=(y*ow+x)*4;
-        for(var c=0;c<3;c++)px[oi+c]=Math.round(sd[(fy*sw+fx)*4+c]*(1-dx)*(1-dy)+sd[(fy*sw+cx2)*4+c]*dx*(1-dy)+sd[(cy2*sw+fx)*4+c]*(1-dx)*dy+sd[(cy2*sw+cx2)*4+c]*dx*dy);
-        px[oi+3]=255;}}
-      octx.putImageData(od,0,0);
+      var outCanvas = document.createElement('canvas');
+      outCanvas.width = outW;
+      outCanvas.height = outH;
+      var outCtx = outCanvas.getContext('2d');
+      var outImgData = outCtx.createImageData(outW, outH);
+      var outPx = outImgData.data;
 
-      // === VERSION COULEUR (pour Gemini) — nettoyage doux ===
-      var colC=document.createElement('canvas');colC.width=ow;colC.height=oh;
-      var colCtx=colC.getContext('2d');colCtx.drawImage(oc,0,0);
-      var colD=colCtx.getImageData(0,0,ow,oh),cp=colD.data;
+      for (var oy = 0; oy < outH; oy++) {
+        var v = oy / Math.max(1, outH - 1);
+        for (var ox = 0; ox < outW; ox++) {
+          var u = ox / Math.max(1, outW - 1);
+          var sX = (1 - u) * (1 - v) * tl.x + u * (1 - v) * tr.x + u * v * br.x + (1 - u) * v * bl.x;
+          var sY = (1 - u) * (1 - v) * tl.y + u * (1 - v) * tr.y + u * v * br.y + (1 - u) * v * bl.y;
+
+          var fx = Math.max(0, Math.min(Math.floor(sX), srcW - 1));
+          var fy = Math.max(0, Math.min(Math.floor(sY), srcH - 1));
+          var cx = Math.min(fx + 1, srcW - 1);
+          var cy = Math.min(fy + 1, srcH - 1);
+          var dx = sX - fx;
+          var dy = sY - fy;
+          var oi = (oy * outW + ox) * 4;
+
+          for (var ch = 0; ch < 3; ch++) {
+            outPx[oi + ch] = Math.round(
+              srcData[(fy * srcW + fx) * 4 + ch] * (1 - dx) * (1 - dy) +
+              srcData[(fy * srcW + cx) * 4 + ch] * dx * (1 - dy) +
+              srcData[(cy * srcW + fx) * 4 + ch] * (1 - dx) * dy +
+              srcData[(cy * srcW + cx) * 4 + ch] * dx * dy
+            );
+          }
+          outPx[oi + 3] = 255;
+        }
+      }
+      outCtx.putImageData(outImgData, 0, 0);
+
+      // === Grayscale from warped image ===
+      var grayArr = new Uint8Array(outW * outH);
+      for (var i = 0, j = 0; i < outPx.length; i += 4, j++) {
+        grayArr[j] = Math.round(0.299 * outPx[i] + 0.587 * outPx[i + 1] + 0.114 * outPx[i + 2]);
+      }
+
+      // === 1. SCAN VERSION (Bradley adaptive threshold) ===
+      var scanBinary = bradleyThreshold(grayArr, outW, outH);
+      var scanCanvas = document.createElement('canvas');
+      scanCanvas.width = outW;
+      scanCanvas.height = outH;
+      var scanCtx = scanCanvas.getContext('2d');
+      var scanData = scanCtx.createImageData(outW, outH);
+      var scanPx = scanData.data;
+      for (var i = 0, j = 0; j < scanBinary.length; j++, i += 4) {
+        if (scanBinary[j] === 0) {
+          // Text: use original gray for anti-aliasing
+          var textVal = Math.min(grayArr[j] * 0.5, 60);
+          scanPx[i] = scanPx[i + 1] = scanPx[i + 2] = textVal;
+        } else {
+          scanPx[i] = scanPx[i + 1] = scanPx[i + 2] = 255;
+        }
+        scanPx[i + 3] = 255;
+      }
+      scanCtx.putImageData(scanData, 0, 0);
+      resultScanURL = scanCanvas.toDataURL('image/jpeg', 0.88);
+
+      // === 2. COLOR VERSION (gentle clean, for Gemini) ===
+      var colCanvas = document.createElement('canvas');
+      colCanvas.width = outW;
+      colCanvas.height = outH;
+      var colCtx = colCanvas.getContext('2d');
+      colCtx.drawImage(outCanvas, 0, 0);
+      var colData = colCtx.getImageData(0, 0, outW, outH);
+      var colPx = colData.data;
       // White balance
-      var la=new Uint8Array(ow*oh);for(var i=0,j=0;i<cp.length;i+=4,j++)la[j]=(cp[i]*77+cp[i+1]*150+cp[i+2]*29)>>8;
-      var hs=new Uint32Array(256);for(var j=0;j<la.length;j++)hs[la[j]]++;
-      var tgt=Math.round(la.length*.92),cum=0,wp=240;for(var v2=0;v2<256;v2++){cum+=hs[v2];if(cum>=tgt){wp=Math.max(v2,120);break;}}
-      var scl=Math.min(248/wp,1.25);
-      for(var i=0;i<cp.length;i+=4)for(var c=0;c<3;c++){var val=cp[i+c]*scl;var t=val/255;t=t<.5?2*t*t:1-2*(1-t)*(1-t);cp[i+c]=Math.max(0,Math.min(255,Math.round(t*255)));}
-      colCtx.putImageData(colD,0,0);
-      colorURL=colC.toDataURL('image/jpeg',.88);
-      colorB64=colorURL.split(',')[1];
-
-      // === VERSION SCAN (pour affichage) — Bradley adaptive threshold ===
-      var gray=new Uint8Array(ow*oh);
-      var rawD=octx.getImageData(0,0,ow,oh).data;
-      for(var i=0,j=0;i<rawD.length;i+=4,j++)gray[j]=Math.round(.299*rawD[i]+.587*rawD[i+1]+.114*rawD[i+2]);
-      var scanPx=bradleyThreshold(gray,ow,oh);
-      var scanC=document.createElement('canvas');scanC.width=ow;scanC.height=oh;
-      var scanCtx=scanC.getContext('2d'),scanD=scanCtx.createImageData(ow,oh),sp=scanD.data;
-      // Anti-aliased scan: use original gray for soft edges
-      for(var i=0,j=0;j<scanPx.length;j++,i+=4){
-        if(scanPx[j]===0){sp[i]=sp[i+1]=sp[i+2]=Math.min(gray[j]*0.5,60);}
-        else{sp[i]=sp[i+1]=sp[i+2]=255;}
-        sp[i+3]=255;
+      var lumHist = new Uint32Array(256);
+      for (var j = 0; j < grayArr.length; j++) lumHist[grayArr[j]]++;
+      var target92 = Math.round(grayArr.length * 0.92);
+      var cumSum = 0;
+      var whitePoint = 240;
+      for (var v = 0; v < 256; v++) {
+        cumSum += lumHist[v];
+        if (cumSum >= target92) { whitePoint = Math.max(v, 120); break; }
       }
-      scanCtx.putImageData(scanD,0,0);
-      scanURL=scanC.toDataURL('image/jpeg',.88);
-
-      // === VERSION GRIS (contraste fort) ===
-      var grayC=document.createElement('canvas');grayC.width=ow;grayC.height=oh;
-      var grayCtx=grayC.getContext('2d'),grayD=grayCtx.createImageData(ow,oh),gp=grayD.data;
-      for(var i=0,j=0;j<gray.length;j++,i+=4){
-        var v3=Math.max(0,Math.min(255,1.4*(gray[j]-60)+30));
-        gp[i]=gp[i+1]=gp[i+2]=v3;gp[i+3]=255;
+      var scaleFactor = Math.min(248 / whitePoint, 1.25);
+      for (var i = 0; i < colPx.length; i += 4) {
+        for (var ch = 0; ch < 3; ch++) {
+          var val = colPx[i + ch] * scaleFactor;
+          var norm = val / 255;
+          if (norm < 0.5) { norm = 2 * norm * norm; }
+          else { norm = 1 - 2 * (1 - norm) * (1 - norm); }
+          colPx[i + ch] = Math.max(0, Math.min(255, Math.round(norm * 255)));
+        }
       }
-      grayCtx.putImageData(grayD,0,0);
-      grayURL=grayC.toDataURL('image/jpeg',.88);
+      colCtx.putImageData(colData, 0, 0);
+      resultColorURL = colCanvas.toDataURL('image/jpeg', 0.88);
+      resultColorB64 = resultColorURL.split(',')[1];
 
-      // Show preview
-      curMode='scan';updMode();
-      document.getElementById('pvI').src=scanURL;
-      hideOv();sw('sPrev');
-    }catch(e){hideOv();msg("Erreur: "+e.message,1);}
-  },30);
+      // === 3. GRAY VERSION ===
+      var grayCanvas = document.createElement('canvas');
+      grayCanvas.width = outW;
+      grayCanvas.height = outH;
+      var grayCtx = grayCanvas.getContext('2d');
+      var grayData = grayCtx.createImageData(outW, outH);
+      var grayPx = grayData.data;
+      for (var i = 0, j = 0; j < grayArr.length; j++, i += 4) {
+        var gVal = Math.max(0, Math.min(255, 1.4 * (grayArr[j] - 60) + 30));
+        grayPx[i] = grayPx[i + 1] = grayPx[i + 2] = gVal;
+        grayPx[i + 3] = 255;
+      }
+      grayCtx.putImageData(grayData, 0, 0);
+      resultGrayURL = grayCanvas.toDataURL('image/jpeg', 0.88);
+
+      // Show preview in scan mode
+      currentMode = 'scan';
+      updateModeButtons();
+      document.getElementById('previewImg').src = resultScanURL;
+
+      hideLoading();
+      showScreen('prevScreen');
+
+    } catch (err) {
+      hideLoading();
+      showToast("Erreur: " + err.message, true);
+    }
+  }, 50);
 }
 
 /* === BRADLEY ADAPTIVE THRESHOLD === */
-function bradleyThreshold(gray,w,h){
-  // Integral image
-  var integral=new Float64Array(w*h);
-  for(var y=0;y<h;y++){var rs=0;for(var x=0;x<w;x++){rs+=gray[y*w+x];integral[y*w+x]=rs+(y>0?integral[(y-1)*w+x]:0);}}
-  var out=new Uint8Array(w*h);
-  var r=Math.max(8,Math.round(Math.min(w,h)/8)); // block radius
-  var t=0.85; // threshold factor (lower = more text detected)
-  for(var y=0;y<h;y++){for(var x=0;x<w;x++){
-    var x1=Math.max(0,x-r),y1=Math.max(0,y-r),x2=Math.min(w-1,x+r),y2=Math.min(h-1,y+r);
-    var cnt=(x2-x1+1)*(y2-y1+1);
-    var sum=integral[y2*w+x2];
-    if(x1>0)sum-=integral[y2*w+(x1-1)];
-    if(y1>0)sum-=integral[(y1-1)*w+x2];
-    if(x1>0&&y1>0)sum+=integral[(y1-1)*w+(x1-1)];
-    out[y*w+x]=(gray[y*w+x]<(sum/cnt)*t)?0:255;
-  }}
-  return out;
+function bradleyThreshold(gray, w, h) {
+  // Build integral image
+  var integral = new Float64Array(w * h);
+  for (var y = 0; y < h; y++) {
+    var rowSum = 0;
+    for (var x = 0; x < w; x++) {
+      rowSum += gray[y * w + x];
+      integral[y * w + x] = rowSum + (y > 0 ? integral[(y - 1) * w + x] : 0);
+    }
+  }
+
+  var output = new Uint8Array(w * h);
+  var radius = Math.max(8, Math.round(Math.min(w, h) / 8));
+  var threshold = 0.85;
+
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      var x1 = Math.max(0, x - radius);
+      var y1 = Math.max(0, y - radius);
+      var x2 = Math.min(w - 1, x + radius);
+      var y2 = Math.min(h - 1, y + radius);
+      var count = (x2 - x1 + 1) * (y2 - y1 + 1);
+
+      var sum = integral[y2 * w + x2];
+      if (x1 > 0) sum -= integral[y2 * w + (x1 - 1)];
+      if (y1 > 0) sum -= integral[(y1 - 1) * w + x2];
+      if (x1 > 0 && y1 > 0) sum += integral[(y1 - 1) * w + (x1 - 1)];
+
+      var mean = sum / count;
+      output[y * w + x] = (gray[y * w + x] < mean * threshold) ? 0 : 255;
+    }
+  }
+  return output;
 }
 
-/* === PREVIEW MODES === */
-function setMode(m){
-  curMode=m;updMode();
-  document.getElementById('pvI').src=m==='scan'?scanURL:m==='color'?colorURL:grayURL;
-}
-function updMode(){
-  document.getElementById('mScan').classList.toggle('on',curMode==='scan');
-  document.getElementById('mColor').classList.toggle('on',curMode==='color');
-  document.getElementById('mGray').classList.toggle('on',curMode==='gray');
-}
-
-/* === CONFIRM === */
-function confirmPg(){
-  var sz=Math.round(colorB64.length*.75/1024);
-  // Store scan version for display, color for upload
-  pages.push({scanURL:scanURL,colorB64:colorB64,mime:'image/jpeg',size:sz});
-  killCam();sw('sHome');renderGal();
-  msg("Page "+pages.length+" — "+sz+" KB ✓");
+/* =============================================
+   PREVIEW MODE SWITCHING
+   ============================================= */
+function switchMode(mode) {
+  currentMode = mode;
+  updateModeButtons();
+  var img = document.getElementById('previewImg');
+  if (mode === 'scan') img.src = resultScanURL;
+  else if (mode === 'color') img.src = resultColorURL;
+  else img.src = resultGrayURL;
 }
 
-/* === GALLERY === */
-function renderGal(){
-  var g=document.getElementById('grd'),e=document.getElementById('emp');
-  if(!pages.length){g.innerHTML='';e.style.display='block';document.getElementById('sBtn').disabled=true;updS();return;}
-  e.style.display='none';document.getElementById('sBtn').disabled=false;
-  g.innerHTML=pages.map((p,i)=>'<div class="cd"><span class="tg">P'+(i+1)+' · '+p.size+'KB</span><button class="dl" onclick="event.stopPropagation();rmP('+i+')">✕</button><img src="'+p.scanURL+'"></div>').join('');
-  updS();
+function updateModeButtons() {
+  var scanBtn = document.getElementById('modeScan');
+  var colorBtn = document.getElementById('modeColor');
+  var grayBtn = document.getElementById('modeGray');
+  scanBtn.className = 'prev-mode-btn' + (currentMode === 'scan' ? ' active' : '');
+  colorBtn.className = 'prev-mode-btn' + (currentMode === 'color' ? ' active' : '');
+  grayBtn.className = 'prev-mode-btn' + (currentMode === 'gray' ? ' active' : '');
 }
-function rmP(i){pages.splice(i,1);renderGal();}
-function updS(){document.getElementById('pc').textContent=pages.length;var t=pages.reduce((s,p)=>s+p.size,0);document.getElementById('ts').textContent=t>1024?(t/1024).toFixed(1)+' MB':t+' KB';}
 
-/* === SEND === */
-function doSend(){
-  if(!pages.length)return;if(!GAS){sw('sCfg');return;}
-  showOv("Envoi "+pages.length+" page(s)...");
-  // On envoie la version COULEUR (lisible par Gemini)
-  var payload={action:"upload",pages:pages.map(p=>({base64:p.colorB64,mime:p.mime}))};
-  fetch(GAS,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'},redirect:'follow'})
-    .then(r=>r.json()).then(d=>{hideOv();if(d.success){pages=[];renderGal();msg(d.message);}else msg(d.error||"Erreur",1);})
-    .catch(()=>{
-      fetch(GAS,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)})
-        .then(()=>{hideOv();pages=[];renderGal();msg("✅ Envoyé !");})
-        .catch(()=>{hideOv();msg("Erreur réseau",1);});
+/* =============================================
+   ADD PAGE
+   ============================================= */
+function addPage() {
+  if (!resultColorB64) return;
+  var sizeKB = Math.round(resultColorB64.length * 0.75 / 1024);
+  pages.push({
+    scanURL: resultScanURL,
+    colorB64: resultColorB64,
+    mime: 'image/jpeg',
+    size: sizeKB
+  });
+  stopCamera();
+  showScreen('homeScreen');
+  renderGallery();
+  showToast("Page " + pages.length + " — " + sizeKB + " KB ✓", false);
+}
+
+/* =============================================
+   GALLERY
+   ============================================= */
+function renderGallery() {
+  var grid = document.getElementById('gallery');
+  var empty = document.getElementById('emptyState');
+
+  if (pages.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    document.getElementById('sendButton').disabled = true;
+    updateStats();
+    return;
+  }
+
+  empty.style.display = 'none';
+  document.getElementById('sendButton').disabled = false;
+
+  var html = '';
+  for (var i = 0; i < pages.length; i++) {
+    html += '<div class="home-card">';
+    html += '<span class="badge">P' + (i + 1) + ' · ' + pages[i].size + 'KB</span>';
+    html += '<button class="remove" onclick="event.stopPropagation();removePage(' + i + ')">✕</button>';
+    html += '<img src="' + pages[i].scanURL + '">';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  updateStats();
+}
+
+function removePage(index) {
+  pages.splice(index, 1);
+  renderGallery();
+}
+
+function updateStats() {
+  document.getElementById('pageCount').textContent = pages.length;
+  var totalKB = 0;
+  for (var i = 0; i < pages.length; i++) totalKB += pages[i].size;
+  if (totalKB > 1024) {
+    document.getElementById('totalSize').textContent = (totalKB / 1024).toFixed(1) + ' MB';
+  } else {
+    document.getElementById('totalSize').textContent = totalKB + ' KB';
+  }
+}
+
+/* =============================================
+   SEND TO GOOGLE APPS SCRIPT
+   ============================================= */
+function sendPages() {
+  if (pages.length === 0) return;
+  if (!GAS_URL) { showScreen('configScreen'); return; }
+
+  showLoading("Envoi de " + pages.length + " page(s)...");
+
+  var uploadPages = [];
+  for (var i = 0; i < pages.length; i++) {
+    uploadPages.push({ base64: pages[i].colorB64, mime: pages[i].mime });
+  }
+
+  var payload = JSON.stringify({ action: "upload", pages: uploadPages });
+
+  fetch(GAS_URL, {
+    method: 'POST',
+    body: payload,
+    headers: { 'Content-Type': 'text/plain' },
+    redirect: 'follow'
+  })
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    hideLoading();
+    if (data.success) {
+      pages = [];
+      renderGallery();
+      showToast(data.message, false);
+    } else {
+      showToast(data.error || "Erreur", true);
+    }
+  })
+  .catch(function() {
+    // GAS redirects — try no-cors fallback
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: payload
+    })
+    .then(function() {
+      hideLoading();
+      pages = [];
+      renderGallery();
+      showToast("✅ Envoyé !", false);
+    })
+    .catch(function() {
+      hideLoading();
+      showToast("Erreur réseau", true);
     });
+  });
 }
 
-/* === HELPERS === */
-function showOv(t){document.getElementById('ovt').textContent=t;document.getElementById('ov').classList.add('on');}
-function hideOv(){document.getElementById('ov').classList.remove('on');}
-function msg(m,err){var t=document.getElementById('toast');t.textContent=m;t.className='toast '+(err?'er':'ok');setTimeout(()=>t.classList.add('on'),10);setTimeout(()=>t.classList.remove('on'),3000);}
+/* =============================================
+   UI HELPERS
+   ============================================= */
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+function showToast(message, isError) {
+  var el = document.getElementById('toastEl');
+  el.textContent = message;
+  el.className = 'toast ' + (isError ? 'toast-err' : 'toast-ok');
+  setTimeout(function() { el.classList.add('visible'); }, 10);
+  setTimeout(function() { el.classList.remove('visible'); }, 3000);
+}
 </script>
 </body>
 </html>
