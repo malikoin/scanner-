@@ -21,7 +21,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .nav-item{flex:1;background:transparent;border:none;color:#666;font-size:0.65rem;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
 .nav-item.active{color:#2563eb}
 .nav-item span{font-size:1.2rem}
-.header{padding:12px 0;border-bottom:1px solid #1a1a1a;margin-bottom:16px;display:flex;justify-content:between;align-items:center}
+.header{padding:12px 0;border-bottom:1px solid #1a1a1a;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
 .header h1{font-size:1.1rem;font-weight:700;color:#2563eb}
 .header p{font-size:0.6rem;color:#555;text-transform:uppercase;letter-spacing:1px}
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
@@ -43,8 +43,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .home-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .home-card .badge{position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;font-size:0.5rem;color:#2563eb;font-weight:600}
 .home-card .remove{position:absolute;top:4px;right:4px;width:22px;height:22px;background:#ef4444;border:none;border-radius:50%;color:#fff;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
-#camScreen{position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column}
-#camScreen.active{display:flex}
+
+/* MODULES CAMERA & CROP */
+.overlay-screen{position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column}
+.overlay-screen.active{display:flex}
 #videoEl{width:100%;height:100%;object-fit:cover}
 .cam-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
 .cam-guide{width:86%;max-width:350px;aspect-ratio:210/297;border:2px solid rgba(37,99,235,0.6);border-radius:6px;box-shadow:0 0 0 3000px rgba(0,0,0,0.5);position:relative}
@@ -53,11 +55,20 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .ccr.tr{top:-2px;right:-2px;border-left:none;border-bottom:none;border-radius:0 4px 0 0}
 .ccr.br{bottom:-2px;right:-2px;border-left:none;border-top:none;border-radius:0 0 4px 0}
 .ccr.bl{bottom:-2px;left:-2px;border-right:none;border-top:none;border-radius:0 0 0 4px}
-.cam-controls{position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.8));display:flex;flex-direction:column;align-items:center;gap:12px}
-.crop-container{position:fixed;inset:0;background:#000;z-index:160;display:none;flex-direction:column}
-.crop-container.active{display:flex}
+.cam-controls{position:absolute;bottom:0;left:0;right:0;padding:25px;background:linear-gradient(transparent,rgba(0,0,0,0.9));display:flex;flex-direction:column;align-items:center;gap:15px}
+
+/* BOUTON CAPTURE AGRANDI */
+.shut{width:86px;height:86px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,0.1);cursor:pointer;position:relative}
+.shut::after{content:'';position:absolute;inset:6px;border-radius:50%;background:#fff}
+.shut:active{transform:scale(0.92)}
+
 .crop-wrap{flex:1;position:relative}
 .crop-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* BOUTONS DE FILTRES */
+.pmbtn{padding:8px 16px;border-radius:8px;border:1px solid #252525;background:#141414;color:#aaa;font-size:0.75rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.pmbtn.active{background:#2563eb;border-color:#2563eb;color:#fff}
+
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .overlay.active{opacity:1;pointer-events:all}
 .spinner{width:32px;height:32px;border:3px solid #222;border-top-color:#2563eb;border-radius:50%;animation:spin 0.6s linear infinite}
@@ -65,16 +76,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .toast{position:fixed;top:12px;left:12px;right:12px;padding:12px;border-radius:8px;font-weight:600;font-size:0.72rem;text-align:center;z-index:600;transform:translateY(-150%);transition:transform 0.25s ease-out}
 .toast.visible{transform:translateY(0)}
 .toast-ok{background:#10b981;color:#fff}.toast-err{background:#ef4444;color:#fff}
-.bars-container{display:flex;flex-direction:column;gap:8px}
-.bar-row{display:flex;align-items:center;gap:8px;font-size:0.7rem}
-.bar-label{width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-track{flex:1;height:8px;background:#222;border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;background:#2563eb;border-radius:4px}
 </style>
 </head>
 <body>
 
 <div class="app-container">
+  <!-- ONGLET 1 : SCANNER -->
   <div class="screen active" id="tab-scan">
     <div class="header"><div><h1>Numérisation</h1><p>File d'attente Drive</p></div></div>
     <div style="font-size:0.65rem;color:#555;margin-bottom:8px">PAGES CAPTURÉES : <b id="pageCount" style="color:#fff">0</b></div>
@@ -89,6 +96,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
     </div>
   </div>
 
+  <!-- ONGLET 2 : ANALYTICS -->
   <div class="screen" id="tab-dash">
     <div class="header"><div><h1>Tableau de Bord</h1><p>Indicateurs de Performance</p></div></div>
     <div class="kpi-grid">
@@ -100,9 +108,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
       <select id="productSelect" class="selector-input" onchange="updateProductChart()"><option>Sélectionne un article...</option></select>
       <div id="chartContainer" style="height:120px;display:flex;align-items:end;gap:14px;padding:10px 0;border-bottom:1px solid #333"></div>
     </div>
-    <button class="btn btn-b" onclick="fetchStats()" style="width:100%">🔄 Actualiser les indicators</button>
+    <button class="btn btn-b" onclick="fetchStats()" style="width:100%">🔄 Actualiser les indicateurs</button>
   </div>
 
+  <!-- ONGLET 3 : CLASSEMENT -->
   <div class="screen" id="tab-rank">
     <div class="header"><div><h1>Volume Fournisseurs</h1><p>Classement par volume financier</p></div></div>
     <div class="ranking-list" id="supplierRanking">
@@ -117,26 +126,46 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
   </nav>
 </div>
 
-<div class="screen" id="camScreen">
+<!-- MODULES ÉCRANS FLOTTANTS -->
+<div class="overlay-screen" id="camScreen">
   <video id="videoEl" autoplay playsinline muted></video>
   <div class="cam-overlay"><div class="cam-guide"><div class="ccr tl"></div><div class="ccr tr"></div><div class="ccr br"></div><div class="ccr bl"></div></div></div>
   <div class="cam-controls">
-    <div class="cam-hint">Lentille principale active. Cadre le document.</div>
+    <div style="font-size:0.62rem;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;">Lentille principale active. Cadre le document.</div>
     <button class="shut" onclick="takePhoto()"></button>
-    <button class="btn btn-w" onclick="closeCamera()" style="padding:6px 14px;font-size:0.7rem;margin-top:5px">Annuler</button>
+    <button class="btn btn-w" onclick="closeCamera()" style="padding:8px 16px;font-size:0.75rem;margin-top:5px;background:transparent;color:#fff;border:1px solid #fff;">Annuler</button>
   </div>
 </div>
 
-<div class="crop-container" id="cropScreen">
-  <div style="padding:12px;background:#121212;font-size:0.75rem;text-align:center">Déplace les angles sur les contours nets</div>
+<div class="overlay-screen" id="cropScreen">
+  <div style="padding:16px;background:#121212;font-size:0.75rem;text-align:center;font-weight:600;">Ajuste les 4 angles de la facture</div>
   <div class="crop-wrap" id="cropArea"><canvas id="cropCanvas"></canvas></div>
-  <div style="padding:12px;background:#121212;display:flex;gap:10px">
+  <div style="padding:16px;background:#121212;display:flex;gap:10px">
     <button class="btn btn-w" onclick="cancelCrop()" style="flex:1">Annuler</button>
-    <button class="btn btn-b" onclick="processCrop()" style="flex:1">Valider Image</button>
+    <button class="btn btn-b" onclick="processCrop()" style="flex:2">Valider ✓</button>
   </div>
 </div>
 
-<div class="overlay" id="loadingOverlay"><div class="spinner"></div><p id="loadingText" style="margin-top:10px;font-size:0.7rem"></p></div>
+<div class="overlay-screen" id="prevScreen" style="z-index:160;">
+  <div style="padding:16px;background:#121212;display:flex;justify-content:space-between;align-items:center;">
+    <h3 style="font-size:0.9rem;">Filtres IA</h3>
+    <button class="btn btn-w" onclick="goBackToCam()" style="padding:6px 12px;font-size:0.7rem;background:#333;color:#fff;border:none;">✕</button>
+  </div>
+  <div style="display:flex; justify-content:center; gap:8px; padding:12px; background:#1a1a1a; border-bottom:1px solid #222;">
+    <button class="pmbtn active" id="modeScan" onclick="switchMode('scan')">📄 Anti-Ombre</button>
+    <button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button>
+    <button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ N&B</button>
+  </div>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden;">
+    <img id="previewImg" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+  </div>
+  <div style="padding:16px; background:#121212; display:flex; gap:10px">
+    <button class="btn btn-w" onclick="goBackToCam()" style="flex:1">↺ Reprendre</button>
+    <button class="btn btn-b" onclick="addPage()" style="flex:2">Mémoriser ✓</button>
+  </div>
+</div>
+
+<div class="overlay" id="loadingOverlay"><div class="spinner"></div><p id="loadingText" style="margin-top:12px;font-size:0.75rem"></p></div>
 <div class="toast" id="toastEl"></div>
 
 <script>
@@ -144,11 +173,11 @@ var GAS_URL = localStorage.getItem('gas_url') || '';
 var globalStats = null;
 var pages = [];
 var cameraStream = null, videoTrack = null, capturedImage = null, cropCorners = [];
-var cropDW = 0, cropDH = 0, cropOX = 0, cropOY = 0, dragging = -1, HR = 20;
-var resScanB64 = '';
+var cropDW = 0, cropDH = 0, cropOX = 0, cropOY = 0, dragging = -1, HR = 22;
+var resScanURL = '', resColorURL = '', resGrayURL = '', curMode = 'scan';
 
 function switchTab(tabId) {
-  document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'camScreen' && s.id !== 'cropScreen') s.classList.remove('active'); });
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tabId).classList.add('active');
   document.getElementById('btn-tab-' + tabId).classList.add('active');
@@ -164,18 +193,23 @@ function openCamera() {
     cameraStream = stream; videoTrack = stream.getVideoTracks()[0];
     document.getElementById('videoEl').srcObject = stream;
   }).catch(function(err) {
-    showScreen('tab-scan'); showToast('Erreur vidéo : ' + err.message, true);
+    showScreen('none'); showToast('Erreur vidéo : ' + err.message, true);
   });
 }
 
 function showScreen(id) {
-  document.getElementById('camScreen').classList.remove('active');
-  document.getElementById('cropScreen').classList.remove('active');
-  if(id === 'camScreen' || id === 'cropScreen') document.getElementById(id).classList.add('active');
+  var overlays = ['camScreen', 'cropScreen', 'prevScreen'];
+  if (overlays.includes(id)) {
+    overlays.forEach(s => { var el = document.getElementById(s); if(el) el.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  } else {
+    overlays.forEach(s => { var el = document.getElementById(s); if(el) el.classList.remove('active'); });
+  }
 }
 
-function closeCamera() { stopCam(); showScreen('tab-scan'); }
+function closeCamera() { stopCam(); showScreen('none'); }
 function cancelCrop() { showScreen('camScreen'); }
+function goBackToCam() { showScreen('camScreen'); }
 
 function stopCam() {
   if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; videoTrack = null; }
@@ -222,6 +256,7 @@ function drawCrop() {
   for(var i=0; i<4; i++){
     var px=cropOX+cropCorners[i].x*sx, py=cropOY+cropCorners[i].y*sy;
     ctx.beginPath();ctx.arc(px,py,HR,0,Math.PI*2);ctx.fillStyle='#2563eb';ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   }
 }
 
@@ -230,39 +265,109 @@ function setupTouch(cv) {
   function pos(e){ var r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
   cv.ontouchstart=cv.onmousedown=function(e){
     e.preventDefault(); var p=pos(e); dragging=-1;
-    for(var i=0; i<4; i++){ var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy; if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2.5){dragging=i;break;} }
+    for(var i=0; i<4; i++){ var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy; if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*3){dragging=i;break;} }
   };
   cv.ontouchmove=cv.onmousemove=function(e){ if(dragging<0)return; e.preventDefault(); var p=pos(e); cropCorners[dragging].x=Math.max(0,Math.min(capturedImage.naturalWidth,Math.round((p.x-cropOX)/sx))); cropCorners[dragging].y=Math.max(0,Math.min(capturedImage.naturalHeight,Math.round((p.y-cropOY)/sy))); drawCrop(); };
   cv.ontouchend=cv.onmouseup=function(){dragging=-1;};
 }
 
-function processCrop() {
-  showLoading('Optimisation numérique...');
-  setTimeout(function() {
-    var tl=cropCorners[0],tr=cropCorners[1],br=cropCorners[2],bl=cropCorners[3];
-    var oW=Math.round(Math.max(Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2)), Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2))));
-    var oH=Math.round(Math.max(Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2)), Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2))));
-    if(oW>1200){oH=Math.round(oH*1200/oW);oW=1200;}
-    
-    var sc=document.createElement('canvas'); sc.width=capturedImage.naturalWidth; sc.height=capturedImage.naturalHeight;
-    sc.getContext('2d').drawImage(capturedImage,0,0);
-    var sd=sc.getContext('2d').getImageData(0,0,sc.width,sc.height).data;
-    var oc=document.createElement('canvas'); oc.width=oW; oc.height=oH;
-    var octx=oc.getContext('2d'), od=octx.createImageData(oW,oH), op=od.data;
+function boxBlur(src, w, h, radius) {
+  var out = new Uint8Array(w * h), tmp = new Uint8Array(w * h), r = radius;
+  for (var y = 0; y < h; y++) {
+    var sum = 0, count = 0;
+    for (var x = 0; x < r && x < w; x++) { sum += src[y*w+x]; count++; }
+    for (var x = 0; x < w; x++) {
+      if (x + r < w) { sum += src[y*w+x+r]; count++; }
+      if (x - r > 0) { sum -= src[y*w+x-r-1]; count--; }
+      tmp[y*w+x] = Math.round(sum / count);
+    }
+  }
+  for (var x = 0; x < w; x++) {
+    var sum = 0, count = 0;
+    for (var y = 0; y < r && y < h; y++) { sum += tmp[y*w+x]; count++; }
+    for (var y = 0; y < h; y++) {
+      if (y + r < h) { sum += tmp[(y+r)*w+x]; count++; }
+      if (y - r > 0) { sum -= tmp[(y-r-1)*w+x]; count--; }
+      out[y*w+x] = Math.round(sum / count);
+    }
+  }
+  return out;
+}
 
-    for(var y=0; y<oH; y++){ var v=y/Math.max(1,oH-1); for(var x=0; x<oW; x++){ var u=x/Math.max(1,oW-1);
-      var sX=(1-u)*(1-v)*tl.x+u*(1-v)*tr.x+u*v*br.x+(1-u)*v*bl.x;
-      var sY=(1-u)*(1-v)*tl.y+u*(1-v)*tr.y+u*v*br.y+(1-u)*v*bl.y;
-      var fx=Math.max(0,Math.min(Math.floor(sX),sc.width-1)), fy=Math.max(0,Math.min(Math.floor(sY),sc.height-1));
-      var oi=(y*oW+x)*4;
-      op[oi]=sd[(fy*sc.width+fx)*4]; op[oi+1]=sd[(fy*sc.width+fx)*4+1]; op[oi+2]=sd[(fy*sc.width+fx)*4+2]; op[oi+3]=255;
-    }}
-    octx.putImageData(od,0,0);
-    resScanB64 = oc.toDataURL('image/jpeg',0.82).split(',')[1];
-    pages.push({ base64:resScanB64, mime:'image/jpeg', size:Math.round(resScanB64.length*0.75/1024), preview:oc.toDataURL('image/jpeg',0.3) });
-    stopCam(); hideLoading(); showScreen('tab-scan'); renderGallery();
-    showToast('Page mémorisée ✓');
+function processCrop() {
+  showLoading('Application des filtres IA...');
+  setTimeout(function() {
+    try {
+      var tl=cropCorners[0],tr=cropCorners[1],br=cropCorners[2],bl=cropCorners[3];
+      var oW=Math.round(Math.max(Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2)), Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2))));
+      var oH=Math.round(Math.max(Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2)), Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2))));
+      if(oW>1400){oH=Math.round(oH*1400/oW);oW=1400;}
+      
+      var sc=document.createElement('canvas'); sc.width=capturedImage.naturalWidth; sc.height=capturedImage.naturalHeight;
+      sc.getContext('2d').drawImage(capturedImage,0,0);
+      var sd=sc.getContext('2d').getImageData(0,0,sc.width,sc.height).data;
+      var oc=document.createElement('canvas'); oc.width=oW; oc.height=oH;
+      var octx=oc.getContext('2d'), od=octx.createImageData(oW,oH), op=od.data;
+
+      for(var y=0; y<oH; y++){ var v=y/Math.max(1,oH-1); for(var x=0; x<oW; x++){ var u=x/Math.max(1,oW-1);
+        var sX=(1-u)*(1-v)*tl.x+u*(1-v)*tr.x+u*v*br.x+(1-u)*v*bl.x;
+        var sY=(1-u)*(1-v)*tl.y+u*(1-v)*tr.y+u*v*br.y+(1-u)*v*bl.y;
+        var fx=Math.max(0,Math.min(Math.floor(sX),sc.width-1)), fy=Math.max(0,Math.min(Math.floor(sY),sc.height-1));
+        var cx=Math.min(fx+1,sc.width-1), cy=Math.min(fy+1,sc.height-1);
+        var dx=sX-fx, dy=sY-fy, oi=(y*oW+x)*4;
+        for(var ch=0;ch<3;ch++) op[oi+ch] = Math.round(sd[(fy*sc.width+fx)*4+ch]*(1-dx)*(1-dy) + sd[(fy*sc.width+cx)*4+ch]*dx*(1-dy) + sd[(cy*sc.width+fx)*4+ch]*(1-dx)*dy + sd[(cy*sc.width+cx)*4+ch]*dx*dy);
+        op[oi+3]=255;
+      }}
+      octx.putImageData(od,0,0);
+      resColorURL = oc.toDataURL('image/jpeg',0.85);
+
+      var gray=new Uint8Array(oW*oH);
+      for(var i=0,j=0;i<op.length;i+=4,j++){gray[j]=Math.round(0.299*op[i]+0.587*op[i+1]+0.114*op[i+2]);}
+      
+      // Mode Anti-Ombre IA
+      var blurred = boxBlur(gray, oW, oH, Math.max(15, Math.round(Math.min(oW,oH)/12)));
+      var scanCv=document.createElement('canvas'); scanCv.width=oW; scanCv.height=oH;
+      var scanCtx=scanCv.getContext('2d'), scanD=scanCtx.createImageData(oW,oH), sp=scanD.data;
+      for(var i=0,j=0;j<gray.length;j++,i+=4){
+        var bg=Math.max(blurred[j],1);
+        var res=Math.round((gray[j]/bg)*230);
+        res = res < 150 ? Math.max(0, res * 0.4) : 255;
+        sp[i]=sp[i+1]=sp[i+2]=res; sp[i+3]=255;
+      }
+      scanCtx.putImageData(scanD,0,0);
+      resScanURL = scanCv.toDataURL('image/jpeg',0.85);
+
+      // Mode N&B basique
+      var grayCv=document.createElement('canvas'); grayCv.width=oW; grayCv.height=oH;
+      var grayCtx=grayCv.getContext('2d'), grayD=grayCtx.createImageData(oW,oH), gp=grayD.data;
+      for(var i=0,j=0;j<gray.length;j++,i+=4){var gv=Math.max(0,Math.min(255,1.2*(gray[j]-50)+40)); gp[i]=gp[i+1]=gp[i+2]=gv; gp[i+3]=255;}
+      grayCtx.putImageData(grayD,0,0);
+      resGrayURL = grayCv.toDataURL('image/jpeg',0.85);
+
+      curMode = 'scan'; updateModes();
+      document.getElementById('previewImg').src = resScanURL;
+      hideLoading(); showScreen('prevScreen');
+    } catch(err) { hideLoading(); showToast('Erreur Filtre : ' + err.message, true); }
   }, 50);
+}
+
+function switchMode(mode) {
+  curMode = mode; updateModes();
+  document.getElementById('previewImg').src = mode==='scan'?resScanURL : (mode==='color'?resColorURL:resGrayURL);
+}
+
+function updateModes() {
+  document.getElementById('modeScan').className = 'pmbtn' + (curMode==='scan'?' active':'');
+  document.getElementById('modeColor').className = 'pmbtn' + (curMode==='color'?' active':'');
+  document.getElementById('modeGray').className = 'pmbtn' + (curMode==='gray'?' active':'');
+}
+
+function addPage() {
+  var targetURL = curMode==='scan'?resScanURL : (curMode==='color'?resColorURL:resGrayURL);
+  var b64 = targetURL.split(',')[1];
+  pages.push({ base64:b64, mime:'image/jpeg', size:Math.round(b64.length*0.75/1024), preview:targetURL });
+  stopCam(); showScreen('none'); renderGallery();
+  showToast('Page validée ✓');
 }
 
 function renderGallery() {
@@ -275,17 +380,17 @@ function renderGallery() {
 function removePage(i) { pages.splice(i,1); renderGallery(); }
 
 function sendPages() {
-  showLoading('Téléversement...');
+  showLoading('Synchronisation Sheets...');
   var payload = JSON.stringify({action:'upload', pages: pages.map(p => ({base64:p.base64, mime:p.mime}))});
   fetch(GAS_URL,{method:'POST', body:payload, headers:{'Content-Type':'text/plain'}})
   .then(r => r.json()).then(d => {
-    hideLoading(); if(d.success){ pages=[]; renderGallery(); showToast('Indexé sur Sheets !'); } else showToast(d.error, true);
-  }).catch(() => { hideLoading(); showToast('Vérifie le déploiement web', true); });
+    hideLoading(); if(d.success){ pages=[]; renderGallery(); showToast('Facture(s) envoyée(s) !'); } else showToast(d.error, true);
+  }).catch(() => { hideLoading(); showToast('Vérifie le lien Backend Apps Script', true); });
 }
 
 function fetchStats() {
-  if(!GAS_URL) return;
-  showLoading('Calcul des indicateurs...');
+  if(!GAS_URL) { showToast('URL non configurée', true); return; }
+  showLoading('Analyse des prix...');
   fetch(GAS_URL + "?action=getStats")
   .then(r => r.json()).then(d => {
     hideLoading(); globalStats = d;
@@ -304,7 +409,7 @@ function fetchStats() {
         <div class="ranking-val">${f.total.toFixed(2)}€</div>
       </div>
     `).join('');
-  }).catch(() => { hideLoading(); showToast('Erreur de chargement KPIs', true); });
+  }).catch(() => { hideLoading(); showToast('Erreur réseau / CORS', true); });
 }
 
 function updateProductChart() {
