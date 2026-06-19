@@ -7,245 +7,174 @@
 <meta name="theme-color" content="#000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#fff; height:100dvh; overflow:hidden; user-select:none; }
-.screen { position:fixed; inset:0; display:none; flex-direction:column; background:#000; }
-.screen.active { display:flex; }
-.btn { padding:13px 20px; border-radius:12px; border:none; font-weight:600; font-size:0.8rem; cursor:pointer; text-align:center; }
-.btn:active { transform:scale(0.96); }
-.btn-w { background:#fff; color:#000; }
-.btn-b { background:#3b82f6; color:#fff; }
-.btn-b:disabled { background:#1a1a1a; color:#333; }
-
-/* CONFIG */
-#configScreen { justify-content:center; align-items:center; padding:24px; z-index:90; }
-.config-box { width:100%; max-width:340px; text-align:center; }
-.config-box h2 { font-size:1rem; color:#3b82f6; margin-bottom:8px; }
-.config-box p { font-size:0.7rem; color:#666; margin-bottom:16px; line-height:1.5; }
-.config-box input { width:100%; padding:13px; border-radius:10px; border:1px solid #333; background:#111; color:#fff; font-size:0.72rem; font-family:monospace; margin-bottom:12px; }
-
-/* HOME */
-.home-header { padding:12px 14px 8px; text-align:center; border-bottom:1px solid #151515; }
-.home-header h1 { font-size:0.85rem; font-weight:700; letter-spacing:1.5px; color:#3b82f6; }
-.home-header small { font-size:0.5rem; color:#444; letter-spacing:2px; }
-.home-stats { display:flex; justify-content:center; gap:18px; padding:6px; font-size:0.63rem; color:#444; }
-.home-stats b { color:#fff; }
-.home-feed { flex:1; overflow-y:auto; padding:10px 12px 115px; }
-.home-empty { text-align:center; padding:30px 16px; color:#333; }
-.home-empty p { font-size:0.72rem; line-height:1.5; margin-top:8px; }
-.home-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-.home-card { position:relative; border-radius:10px; overflow:hidden; background:#0a0a0a; border:1px solid #1a1a1a; }
-.home-card img { width:100%; aspect-ratio:3/4; object-fit:cover; display:block; }
-.home-card .badge { position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:4px; font-size:0.5rem; color:#3b82f6; font-weight:600; }
-.home-card .remove { position:absolute; top:4px; right:4px; width:22px; height:22px; background:rgba(220,40,40,0.85); border:none; border-radius:50%; color:#fff; font-size:0.6rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.home-bar { position:fixed; bottom:0; left:0; right:0; padding:10px 12px; padding-bottom:max(10px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, #000 25%); display:flex; gap:8px; z-index:10; }
-.home-bar .btn { flex:1; }
-
-/* CAMERA */
-#camScreen video { width:100%; height:100%; object-fit:cover; }
-.cam-overlay { position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
-.cam-guide { width:86%; max-width:360px; aspect-ratio:210/297; border:2px solid rgba(59,130,246,0.5); border-radius:6px; box-shadow:0 0 0 3000px rgba(0,0,0,0.35); position:relative; }
-.cam-corner { position:absolute; width:20px; height:20px; }
-.cam-corner.tl { top:-2px; left:-2px; border-top:3px solid #3b82f6; border-left:3px solid #3b82f6; border-radius:5px 0 0 0; }
-.cam-corner.tr { top:-2px; right:-2px; border-top:3px solid #3b82f6; border-right:3px solid #3b82f6; border-radius:0 5px 0 0; }
-.cam-corner.br { bottom:-2px; right:-2px; border-bottom:3px solid #3b82f6; border-right:3px solid #3b82f6; border-radius:0 0 5px 0; }
-.cam-corner.bl { bottom:-2px; left:-2px; border-bottom:3px solid #3b82f6; border-left:3px solid #3b82f6; border-radius:0 0 0 5px; }
-.cam-topbar { position:absolute; top:0; left:0; right:0; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(rgba(0,0,0,0.6), transparent); z-index:5; }
-.cam-topbar h3 { font-size:0.75rem; }
-.cam-icons { display:flex; gap:8px; }
-.cam-icon { width:36px; height:36px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:1rem; cursor:pointer; backdrop-filter:blur(4px); }
-.cam-icon-off { background:rgba(255,255,255,0.12); color:#aaa; }
-.cam-icon-on { background:#f59e0b; color:#000; }
-.cam-bottom { position:absolute; bottom:0; left:0; right:0; padding:12px 20px; padding-bottom:max(16px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, rgba(0,0,0,0.5)); z-index:5; display:flex; flex-direction:column; align-items:center; gap:10px; }
-.cam-hint { font-size:0.62rem; color:rgba(255,255,255,0.4); }
-.cam-zoom { display:flex; align-items:center; gap:8px; width:70%; max-width:250px; }
-.cam-zoom label { font-size:0.6rem; color:#aaa; white-space:nowrap; }
-.cam-zoom input[type=range] { flex:1; -webkit-appearance:none; height:3px; background:#333; border-radius:2px; outline:none; }
-.cam-zoom input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#3b82f6; border:2px solid #fff; }
-.shutter-btn { width:64px; height:64px; border-radius:50%; border:4px solid #fff; background:transparent; cursor:pointer; position:relative; }
-.shutter-btn::after { content:''; position:absolute; inset:4px; border-radius:50%; background:#fff; }
-.shutter-btn:active { transform:scale(0.88); }
-.cam-flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:3; }
-
-/* CROP */
-.crop-header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid #151515; }
-.crop-header h3 { font-size:0.78rem; }
-.crop-header span { font-size:0.52rem; color:#555; }
-.close-btn { background:#1a1a1a; border:none; color:#fff; width:30px; height:30px; border-radius:8px; font-size:0.85rem; cursor:pointer; }
-.crop-canvas-wrap { flex:1; position:relative; overflow:hidden; touch-action:none; }
-.crop-canvas-wrap canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
-.crop-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
-.crop-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
-
-/* PREVIEW */
-.prev-modes { display:flex; justify-content:center; gap:6px; padding:8px; border-bottom:1px solid #151515; }
-.prev-mode-btn { padding:7px 14px; border-radius:8px; border:1px solid #252525; background:#0a0a0a; color:#666; font-size:0.65rem; font-weight:600; cursor:pointer; font-family:inherit; }
-.prev-mode-btn.active { background:#3b82f6; border-color:#3b82f6; color:#fff; }
-.prev-image { flex:1; display:flex; align-items:center; justify-content:center; padding:10px; overflow:hidden; background:#0a0a0a; }
-.prev-image img { max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
-.prev-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
-.prev-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
-
-/* OVERLAY + TOAST */
-.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; }
-.overlay.active { opacity:1; pointer-events:all; }
-.spinner { width:36px; height:36px; border:3px solid #1a1a1a; border-top-color:#3b82f6; border-radius:50%; animation:spin 0.7s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
-.overlay p { margin-top:12px; font-size:0.72rem; color:#555; }
-.toast { position:fixed; top:12px; left:12px; right:12px; padding:10px 14px; border-radius:10px; font-weight:600; font-size:0.72rem; text-align:center; z-index:300; transform:translateY(-120%); transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1); }
-.toast.visible { transform:translateY(0); }
-.toast-ok { background:#22c55e; color:#000; }
-.toast-err { background:#ef4444; color:#fff; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;height:100dvh;overflow:hidden;user-select:none}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;background:#000}
+.screen.active{display:flex}
+.btn{padding:13px 20px;border-radius:12px;border:none;font-weight:600;font-size:0.8rem;cursor:pointer;text-align:center}
+.btn:active{transform:scale(0.96)}
+.btn-w{background:#fff;color:#000}
+.btn-b{background:#3b82f6;color:#fff}
+.btn-b:disabled{background:#1a1a1a;color:#333}
+#configScreen{justify-content:center;align-items:center;padding:24px;z-index:90}
+.config-box{width:100%;max-width:340px;text-align:center}
+.config-box h2{font-size:1rem;color:#3b82f6;margin-bottom:8px}
+.config-box p{font-size:0.7rem;color:#666;margin-bottom:16px;line-height:1.5}
+.config-box input{width:100%;padding:13px;border-radius:10px;border:1px solid #333;background:#111;color:#fff;font-size:0.72rem;font-family:monospace;margin-bottom:12px}
+.home-header{padding:12px 14px 8px;text-align:center;border-bottom:1px solid #151515}
+.home-header h1{font-size:0.85rem;font-weight:700;letter-spacing:1.5px;color:#3b82f6}
+.home-header small{font-size:0.5rem;color:#444;letter-spacing:2px}
+.home-stats{display:flex;justify-content:center;gap:18px;padding:6px;font-size:0.63rem;color:#444}
+.home-stats b{color:#fff}
+.home-feed{flex:1;overflow-y:auto;padding:10px 12px 115px}
+.home-empty{text-align:center;padding:30px 16px;color:#333}
+.home-empty p{font-size:0.72rem;line-height:1.5;margin-top:8px}
+.home-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.home-card{position:relative;border-radius:10px;overflow:hidden;background:#0a0a0a;border:1px solid #1a1a1a}
+.home-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.home-card .badge{position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:4px;font-size:0.5rem;color:#3b82f6;font-weight:600}
+.home-card .remove{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(220,40,40,0.85);border:none;border-radius:50%;color:#fff;font-size:0.6rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.home-bar{position:fixed;bottom:0;left:0;right:0;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#000 25%);display:flex;gap:8px;z-index:10}
+.home-bar .btn{flex:1}
+#camScreen video{width:100%;height:100%;object-fit:cover}
+.cam-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.cam-guide{width:86%;max-width:360px;aspect-ratio:210/297;border:2px solid rgba(59,130,246,0.5);border-radius:6px;box-shadow:0 0 0 3000px rgba(0,0,0,0.35);position:relative}
+.ccr{position:absolute;width:20px;height:20px}
+.ccr.tl{top:-2px;left:-2px;border-top:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:5px 0 0 0}
+.ccr.tr{top:-2px;right:-2px;border-top:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 5px 0 0}
+.ccr.br{bottom:-2px;right:-2px;border-bottom:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 0 5px 0}
+.ccr.bl{bottom:-2px;left:-2px;border-bottom:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:0 0 0 5px}
+.cam-topbar{position:absolute;top:0;left:0;right:0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(rgba(0,0,0,0.6),transparent);z-index:5}
+.cam-topbar h3{font-size:0.75rem}
+.cam-icons{display:flex;gap:8px}
+.cico{width:36px;height:36px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;backdrop-filter:blur(4px)}
+.cico-off{background:rgba(255,255,255,0.12);color:#aaa}
+.cico-on{background:#f59e0b;color:#000}
+.cam-bottom{position:absolute;bottom:0;left:0;right:0;padding:12px 20px;padding-bottom:max(16px,env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,0.5));z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cam-hint{font-size:0.62rem;color:rgba(255,255,255,0.4)}
+.cam-zoom{display:flex;align-items:center;gap:8px;width:70%;max-width:250px}
+.cam-zoom label{font-size:0.6rem;color:#aaa;white-space:nowrap}
+.cam-zoom input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:#333;border-radius:2px;outline:none}
+.cam-zoom input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#3b82f6;border:2px solid #fff}
+.shut{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:transparent;cursor:pointer;position:relative}
+.shut::after{content:'';position:absolute;inset:4px;border-radius:50%;background:#fff}
+.shut:active{transform:scale(0.88)}
+.cflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+.crop-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #151515}
+.crop-header h3{font-size:0.78rem}
+.crop-header span{font-size:0.52rem;color:#555}
+.xbtn{background:#1a1a1a;border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:0.85rem;cursor:pointer}
+.crop-wrap{flex:1;position:relative;overflow:hidden;touch-action:none}
+.crop-wrap canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+.crop-bar{padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:8px}
+.crop-bar .btn{flex:1;padding:12px;font-size:0.75rem}
+.prev-modes{display:flex;justify-content:center;gap:6px;padding:8px;border-bottom:1px solid #151515}
+.pmbtn{padding:7px 14px;border-radius:8px;border:1px solid #252525;background:#0a0a0a;color:#666;font-size:0.65rem;font-weight:600;cursor:pointer;font-family:inherit}
+.pmbtn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.prev-image{flex:1;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;background:#0a0a0a}
+.prev-image img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.prev-bar{padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:8px}
+.prev-bar .btn{flex:1;padding:12px;font-size:0.75rem}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.overlay.active{opacity:1;pointer-events:all}
+.spinner{width:36px;height:36px;border:3px solid #1a1a1a;border-top-color:#3b82f6;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{margin-top:12px;font-size:0.72rem;color:#555}
+.toast{position:fixed;top:12px;left:12px;right:12px;padding:10px 14px;border-radius:10px;font-weight:600;font-size:0.72rem;text-align:center;z-index:300;transform:translateY(-120%);transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1)}
+.toast.visible{transform:translateY(0)}
+.toast-ok{background:#22c55e;color:#000}
+.toast-err{background:#ef4444;color:#fff}
 </style>
 </head>
 <body>
 
-<!-- CONFIG -->
-<div class="screen" id="configScreen">
-  <div class="config-box">
-    <h2>⚙️ Configuration</h2>
-    <p>Colle l'URL de ton Google Apps Script</p>
-    <input id="configInput" placeholder="https://script.google.com/macros/s/.../exec">
-    <button class="btn btn-b" onclick="saveConfig()" style="width:100%">Valider</button>
-  </div>
-</div>
+<div class="screen" id="configScreen"><div class="config-box"><h2>⚙️ Configuration</h2><p>Colle l'URL de ton Google Apps Script</p><input id="configInput" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn btn-b" onclick="saveConfig()" style="width:100%">Valider</button></div></div>
 
-<!-- HOME -->
 <div class="screen active" id="homeScreen">
   <div class="home-header"><h1>VAZYGOOD SCANNER</h1><small>SCAN PRO · DRIVE</small></div>
   <div class="home-stats">PAGES <b id="pageCount">0</b>&nbsp;&nbsp;TAILLE <b id="totalSize">0 KB</b></div>
-  <div class="home-feed">
-    <div id="emptyState" class="home-empty"><div style="font-size:2rem">📄</div><p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p></div>
-    <div class="home-grid" id="gallery"></div>
-  </div>
-  <div class="home-bar">
-    <button class="btn btn-w" onclick="openCamera()">📸 Scanner</button>
-    <button class="btn btn-b" id="sendButton" disabled onclick="sendPages()">🚀 Envoyer</button>
-  </div>
+  <div class="home-feed"><div id="emptyState" class="home-empty"><div style="font-size:2rem">📄</div><p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p></div><div class="home-grid" id="gallery"></div></div>
+  <div class="home-bar"><button class="btn btn-w" onclick="openCamera()">📸 Scanner</button><button class="btn btn-b" id="sendButton" disabled onclick="sendPages()">🚀 Envoyer</button></div>
 </div>
 
-<!-- CAMERA -->
 <div class="screen" id="camScreen">
   <video id="videoEl" autoplay playsinline muted></video>
-  <div class="cam-overlay" id="camOverlay">
-    <div class="cam-guide" id="camGuide">
-      <div class="cam-corner tl"></div>
-      <div class="cam-corner tr"></div>
-      <div class="cam-corner br"></div>
-      <div class="cam-corner bl"></div>
-    </div>
-  </div>
-  <div class="cam-topbar">
-    <h3>📷 Scanner</h3>
-    <div class="cam-icons">
-      <button class="cam-icon cam-icon-off" id="flashBtn" onclick="toggleFlash()">🔦</button>
-      <button class="cam-icon cam-icon-off" onclick="closeCamera()">✕</button>
-    </div>
-  </div>
+  <div class="cam-overlay"><div class="cam-guide"><div class="ccr tl"></div><div class="ccr tr"></div><div class="ccr br"></div><div class="ccr bl"></div></div></div>
+  <div class="cam-topbar"><h3>📷 Scanner</h3><div class="cam-icons"><button class="cico cico-off" id="flashBtn" onclick="toggleFlash()">🔦</button><button class="cico cico-off" onclick="closeCamera()">✕</button></div></div>
   <div class="cam-bottom">
-    <div class="cam-zoom" id="zoomRow" style="display:none">
-      <label>1x</label>
-      <input type="range" id="zoomSlider" min="1" max="5" step="0.1" value="1" oninput="applyZoom(this.value)">
-      <label id="zoomLabel">1x</label>
-    </div>
+    <div class="cam-zoom" id="zoomRow" style="display:none"><label>1x</label><input type="range" id="zoomSlider" min="1" max="5" step="0.1" value="1" oninput="applyZoom(this.value)"><label id="zoomLabel">1x</label></div>
     <div class="cam-hint">Cadre la facture dans le rectangle</div>
-    <button class="shutter-btn" onclick="takePhoto()"></button>
+    <button class="shut" onclick="takePhoto()"></button>
   </div>
-  <div class="cam-flash" id="flashOverlay"></div>
+  <div class="cflash" id="flashOverlay"></div>
 </div>
 
-<!-- CROP -->
 <div class="screen" id="cropScreen">
-  <div class="crop-header"><div><h3>Recadrer le document</h3><span>Déplace les 4 coins</span></div><button class="close-btn" onclick="cancelCrop()">✕</button></div>
-  <div class="crop-canvas-wrap" id="cropArea"><canvas id="cropCanvas"></canvas></div>
-  <div class="crop-bar">
-    <button class="btn btn-w" onclick="cancelCrop()">Annuler</button>
-    <button class="btn btn-w" onclick="resetCorners()">↺ Reset</button>
-    <button class="btn btn-b" onclick="processCrop()">Valider ✓</button>
-  </div>
+  <div class="crop-header"><div><h3>Recadrer le document</h3><span>Déplace les 4 coins</span></div><button class="xbtn" onclick="cancelCrop()">✕</button></div>
+  <div class="crop-wrap" id="cropArea"><canvas id="cropCanvas"></canvas></div>
+  <div class="crop-bar"><button class="btn btn-w" onclick="cancelCrop()">Annuler</button><button class="btn btn-w" onclick="resetCorners()">↺ Reset</button><button class="btn btn-b" onclick="processCrop()">Valider ✓</button></div>
 </div>
 
-<!-- PREVIEW -->
 <div class="screen" id="prevScreen">
-  <div class="crop-header"><h3>Aperçu du scan</h3><button class="close-btn" onclick="goBackToCamera()">✕</button></div>
-  <div class="prev-modes">
-    <button class="prev-mode-btn active" id="modeScan" onclick="switchMode('scan')">📄 Scanner</button>
-    <button class="prev-mode-btn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button>
-    <button class="prev-mode-btn" id="modeGray" onclick="switchMode('gray')">⚫ Gris</button>
-  </div>
-  <div class="prev-image"><img id="previewImg" alt="Aperçu"></div>
-  <div class="prev-bar">
-    <button class="btn btn-w" onclick="goBackToCamera()">↺ Refaire</button>
-    <button class="btn btn-b" onclick="addPage()">Ajouter ✓</button>
-  </div>
+  <div class="crop-header"><h3>Aperçu du scan</h3><button class="xbtn" onclick="goBackToCam()">✕</button></div>
+  <div class="prev-modes"><button class="pmbtn active" id="modeScan" onclick="switchMode('scan')">📄 Scanner</button><button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button><button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ Gris</button></div>
+  <div class="prev-image"><img id="previewImg"></div>
+  <div class="prev-bar"><button class="btn btn-w" onclick="goBackToCam()">↺ Refaire</button><button class="btn btn-b" onclick="addPage()">Ajouter ✓</button></div>
 </div>
 
 <div class="overlay" id="loadingOverlay"><div class="spinner"></div><p id="loadingText"></p></div>
 <div class="toast" id="toastEl"></div>
 
 <script>
-/* =============================================
-   CONFIG
-   ============================================= */
 var GAS_URL = localStorage.getItem('gas_url') || '';
 if (!GAS_URL) showScreen('configScreen');
 
 function saveConfig() {
   var url = document.getElementById('configInput').value.trim();
-  if (!url || url.indexOf('https://') !== 0) { showToast("URL invalide", true); return; }
-  GAS_URL = url;
-  localStorage.setItem('gas_url', url);
-  showScreen('homeScreen');
-  showToast("Configuré ✓", false);
+  if (!url || url.indexOf('https://') !== 0) { showToast('URL invalide', true); return; }
+  GAS_URL = url; localStorage.setItem('gas_url', url);
+  showScreen('homeScreen'); showToast('Configuré ✓', false);
 }
 
 function showScreen(id) {
-  var screens = document.querySelectorAll('.screen');
-  for (var i = 0; i < screens.length; i++) {
-    if (screens[i].id === id) screens[i].classList.add('active');
-    else screens[i].classList.remove('active');
+  var all = document.querySelectorAll('.screen');
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].id === id) { all[i].classList.add('active'); }
+    else { all[i].classList.remove('active'); }
   }
 }
 
-/* =============================================
-   STATE
-   ============================================= */
 var pages = [];
 var cameraStream = null;
 var videoTrack = null;
 var torchActive = false;
 var capturedImage = null;
 var cropCorners = [];
-var cropDisplayW = 0, cropDisplayH = 0, cropOffsetX = 0, cropOffsetY = 0;
-var draggingCorner = -1;
-var HANDLE_R = 22;
-var resultScanURL = '', resultColorURL = '', resultGrayURL = '', resultColorB64 = '';
-var currentMode = 'scan';
+var cropDW = 0, cropDH = 0, cropOX = 0, cropOY = 0;
+var dragging = -1;
+var HR = 22;
+var resScanURL = '', resColorURL = '', resGrayURL = '', resColorB64 = '';
+var curMode = 'scan';
 
-/* =============================================
-   CAMERA
-   ============================================= */
+// ===================== CAMERA =====================
+
 function openCamera() {
   if (!GAS_URL) { showScreen('configScreen'); return; }
   showScreen('camScreen');
   torchActive = false;
-  document.getElementById('flashBtn').className = 'cam-icon cam-icon-off';
+  document.getElementById('flashBtn').className = 'cico cico-off';
 
-  var video = document.getElementById('videoEl');
   navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1440 } },
     audio: false
-  })
-  .then(function(stream) {
+  }).then(function(stream) {
     cameraStream = stream;
     videoTrack = stream.getVideoTracks()[0];
-    video.srcObject = stream;
-    // Check zoom after camera ready
+    document.getElementById('videoEl').srcObject = stream;
     setTimeout(checkZoom, 1000);
-  })
-  .catch(function(err) {
+  }).catch(function(err) {
     showScreen('homeScreen');
-    showToast("Caméra: " + err.message, true);
+    showToast('Caméra: ' + err.message, true);
   });
 }
 
@@ -255,523 +184,339 @@ function checkZoom() {
     var caps = videoTrack.getCapabilities();
     if (caps && caps.zoom && caps.zoom.max > 1) {
       document.getElementById('zoomRow').style.display = 'flex';
-      var slider = document.getElementById('zoomSlider');
-      slider.min = caps.zoom.min || 1;
-      slider.max = Math.min(caps.zoom.max, 10);
-      slider.value = caps.zoom.min || 1;
-    } else {
-      document.getElementById('zoomRow').style.display = 'none';
+      var sl = document.getElementById('zoomSlider');
+      sl.min = caps.zoom.min || 1;
+      sl.max = Math.min(caps.zoom.max, 10);
+      sl.value = caps.zoom.min || 1;
     }
-  } catch(e) {
-    document.getElementById('zoomRow').style.display = 'none';
-  }
+  } catch(e) {}
 }
 
-function closeCamera() { stopCamera(); showScreen('homeScreen'); }
-function goBackToCamera() { showScreen('camScreen'); }
+function closeCamera() { stopCam(); showScreen('homeScreen'); }
+function goBackToCam() { showScreen('camScreen'); }
+function cancelCrop() { showScreen('camScreen'); }
 
-function stopCamera() {
-  if (torchActive) toggleFlash();
+function stopCam() {
+  if (torchActive) {
+    torchActive = false;
+    if (videoTrack) {
+      videoTrack.applyConstraints({ advanced: [{ torch: false }] }).catch(function(){});
+    }
+  }
   if (cameraStream) {
     var tracks = cameraStream.getTracks();
-    for (var i = 0; i < tracks.length; i++) tracks[i].stop();
+    for (var i = 0; i < tracks.length; i++) { tracks[i].stop(); }
     cameraStream = null; videoTrack = null;
   }
   document.getElementById('videoEl').srcObject = null;
 }
 
-/* --- FLASH : toujours visible, try/catch à l'activation --- */
+// ===================== FLASH (Promise-based) =====================
+
 function toggleFlash() {
-  if (!videoTrack) return;
-  torchActive = !torchActive;
-  try {
-    videoTrack.applyConstraints({ advanced: [{ torch: torchActive }] });
-  } catch(e) {
-    torchActive = false;
-    showToast("Flash non disponible", true);
+  if (!videoTrack) {
+    showToast('Caméra non active', true);
+    return;
   }
-  document.getElementById('flashBtn').className = torchActive ? 'cam-icon cam-icon-on' : 'cam-icon cam-icon-off';
+
+  var newState = !torchActive;
+
+  videoTrack.applyConstraints({
+    advanced: [{ torch: newState }]
+  }).then(function() {
+    torchActive = newState;
+    document.getElementById('flashBtn').className = torchActive ? 'cico cico-on' : 'cico cico-off';
+  }).catch(function(err) {
+    torchActive = false;
+    document.getElementById('flashBtn').className = 'cico cico-off';
+    showToast('Flash: ' + err.message + ' — Essaye Chrome', true);
+  });
 }
 
-/* --- ZOOM --- */
 function applyZoom(val) {
   if (!videoTrack) return;
-  try { videoTrack.applyConstraints({ advanced: [{ zoom: parseFloat(val) }] }); } catch(e) {}
+  videoTrack.applyConstraints({ advanced: [{ zoom: parseFloat(val) }] }).catch(function(){});
   document.getElementById('zoomLabel').textContent = parseFloat(val).toFixed(1) + 'x';
 }
 
-/* --- PHOTO --- */
+// ===================== PHOTO =====================
+
 function takePhoto() {
   var video = document.getElementById('videoEl');
   if (!video.videoWidth) return;
 
-  // Flash animation
-  var flash = document.getElementById('flashOverlay');
-  flash.style.opacity = '0.5';
-  setTimeout(function() { flash.style.opacity = '0'; }, 120);
+  var fl = document.getElementById('flashOverlay');
+  fl.style.opacity = '0.5';
+  setTimeout(function() { fl.style.opacity = '0'; }, 120);
 
-  // Capture full frame
-  var canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  var c = document.createElement('canvas');
+  c.width = video.videoWidth; c.height = video.videoHeight;
+  c.getContext('2d').drawImage(video, 0, 0);
 
-  var dataURL = canvas.toDataURL('image/jpeg', 0.92);
   capturedImage = new Image();
   capturedImage.onload = function() {
     showScreen('cropScreen');
-    initCropWithGuidePosition();
+    initCrop();
   };
-  capturedImage.src = dataURL;
+  capturedImage.src = c.toDataURL('image/jpeg', 0.92);
 }
 
-/* =============================================
-   CROP — coins positionnés depuis le guide caméra
-   ============================================= */
-function initCropWithGuidePosition() {
+// ===================== CROP =====================
+
+function initCrop() {
   requestAnimationFrame(function() {
     var area = document.getElementById('cropArea');
     var cv = document.getElementById('cropCanvas');
-    cv.width = area.clientWidth;
-    cv.height = area.clientHeight;
+    cv.width = area.clientWidth; cv.height = area.clientHeight;
 
-    var imgW = capturedImage.naturalWidth;
-    var imgH = capturedImage.naturalHeight;
-    var scale = Math.min(cv.width / imgW, cv.height / imgH);
-    cropDisplayW = Math.round(imgW * scale);
-    cropDisplayH = Math.round(imgH * scale);
-    cropOffsetX = Math.round((cv.width - cropDisplayW) / 2);
-    cropOffsetY = Math.round((cv.height - cropDisplayH) / 2);
+    var iw = capturedImage.naturalWidth, ih = capturedImage.naturalHeight;
+    var scale = Math.min(cv.width / iw, cv.height / ih);
+    cropDW = Math.round(iw * scale); cropDH = Math.round(ih * scale);
+    cropOX = Math.round((cv.width - cropDW) / 2); cropOY = Math.round((cv.height - cropDH) / 2);
 
-    // === MAP GUIDE RECTANGLE → VIDEO COORDS ===
-    // Le guide fait 86% de la largeur de l'écran, ratio A4, centré
+    // Map guide rectangle to video coords
     var video = document.getElementById('videoEl');
-    var screenW = video.clientWidth;
-    var screenH = video.clientHeight;
-    var vidW = imgW;  // = video.videoWidth
-    var vidH = imgH;  // = video.videoHeight
-
-    // object-fit:cover — calculer la zone visible
-    var videoRatio = vidW / vidH;
-    var screenRatio = screenW / screenH;
-    var visibleX, visibleY, visibleW, visibleH;
-
-    if (videoRatio > screenRatio) {
-      // Vidéo plus large que l'écran → coupée horizontalement
-      visibleH = vidH;
-      visibleW = vidH * screenRatio;
-      visibleX = (vidW - visibleW) / 2;
-      visibleY = 0;
+    var sW = video.clientWidth, sH = video.clientHeight;
+    var vRatio = iw / ih, sRatio = sW / sH;
+    var visX, visY, visW, visH;
+    if (vRatio > sRatio) {
+      visH = ih; visW = ih * sRatio; visX = (iw - visW) / 2; visY = 0;
     } else {
-      // Vidéo plus haute que l'écran → coupée verticalement
-      visibleW = vidW;
-      visibleH = vidW / screenRatio;
-      visibleX = 0;
-      visibleY = (vidH - visibleH) / 2;
+      visW = iw; visH = iw / sRatio; visX = 0; visY = (ih - visH) / 2;
     }
 
-    // Guide sur l'écran : 86% largeur, ratio A4, centré
-    var guideScreenW = screenW * 0.86;
-    var guideScreenH = guideScreenW * (297 / 210);
-    // Si le guide dépasse l'écran en hauteur, le réduire
-    if (guideScreenH > screenH * 0.75) {
-      guideScreenH = screenH * 0.75;
-      guideScreenW = guideScreenH * (210 / 297);
-    }
-    var guideScreenX = (screenW - guideScreenW) / 2;
-    var guideScreenY = (screenH - guideScreenH) / 2;
+    var gW = sW * 0.86, gH = gW * (297 / 210);
+    if (gH > sH * 0.75) { gH = sH * 0.75; gW = gH * (210 / 297); }
+    var gX = (sW - gW) / 2, gY = (sH - gH) / 2;
+    var s2v = visW / sW;
+    var vgX = visX + gX * s2v, vgY = visY + gY * s2v;
+    var vgW = gW * s2v, vgH = gH * s2v;
 
-    // Convertir écran → coordonnées vidéo
-    var scaleToVid = visibleW / screenW;
-    var guideVidX = visibleX + guideScreenX * scaleToVid;
-    var guideVidY = visibleY + guideScreenY * scaleToVid;
-    var guideVidW = guideScreenW * scaleToVid;
-    var guideVidH = guideScreenH * scaleToVid;
+    var x1 = Math.max(0, Math.round(vgX));
+    var y1 = Math.max(0, Math.round(vgY));
+    var x2 = Math.min(iw, Math.round(vgX + vgW));
+    var y2 = Math.min(ih, Math.round(vgY + vgH));
 
-    // Clamp aux bornes de l'image
-    var x1 = Math.max(0, Math.round(guideVidX));
-    var y1 = Math.max(0, Math.round(guideVidY));
-    var x2 = Math.min(vidW, Math.round(guideVidX + guideVidW));
-    var y2 = Math.min(vidH, Math.round(guideVidY + guideVidH));
-
-    cropCorners = [
-      { x: x1, y: y1 },  // top-left
-      { x: x2, y: y1 },  // top-right
-      { x: x2, y: y2 },  // bottom-right
-      { x: x1, y: y2 }   // bottom-left
-    ];
-
-    drawCropOverlay();
-    setupCropTouch(cv);
+    cropCorners = [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}];
+    drawCrop(); setupTouch(cv);
   });
 }
 
 function resetCorners() {
-  var iw = capturedImage.naturalWidth;
-  var ih = capturedImage.naturalHeight;
-  var m = 0.03;
-  cropCorners = [
-    { x: Math.round(iw * m), y: Math.round(ih * m) },
-    { x: Math.round(iw * (1 - m)), y: Math.round(ih * m) },
-    { x: Math.round(iw * (1 - m)), y: Math.round(ih * (1 - m)) },
-    { x: Math.round(iw * m), y: Math.round(ih * (1 - m)) }
-  ];
-  drawCropOverlay();
+  var iw = capturedImage.naturalWidth, ih = capturedImage.naturalHeight, m = 0.03;
+  cropCorners = [{x:Math.round(iw*m),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*(1-m))},{x:Math.round(iw*m),y:Math.round(ih*(1-m))}];
+  drawCrop();
 }
 
-function cancelCrop() { showScreen('camScreen'); }
-
-function drawCropOverlay() {
-  var cv = document.getElementById('cropCanvas');
-  var ctx = cv.getContext('2d');
-  var iw = capturedImage.naturalWidth;
-  var ih = capturedImage.naturalHeight;
-  var sx = cropDisplayW / iw;
-  var sy = cropDisplayH / ih;
-
-  ctx.clearRect(0, 0, cv.width, cv.height);
-  ctx.drawImage(capturedImage, cropOffsetX, cropOffsetY, cropDisplayW, cropDisplayH);
-
-  // Dark overlay
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
-  ctx.fillRect(0, 0, cv.width, cv.height);
-
-  // Bright crop zone
-  ctx.save();
-  ctx.beginPath();
-  for (var i = 0; i < 4; i++) {
-    var px = cropOffsetX + cropCorners[i].x * sx;
-    var py = cropOffsetY + cropCorners[i].y * sy;
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(capturedImage, cropOffsetX, cropOffsetY, cropDisplayW, cropDisplayH);
-  ctx.restore();
-
-  // Blue border
-  ctx.strokeStyle = '#3b82f6';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  for (var i = 0; i < 4; i++) {
-    var px = cropOffsetX + cropCorners[i].x * sx;
-    var py = cropOffsetY + cropCorners[i].y * sy;
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.stroke();
-
-  // Handles
-  for (var i = 0; i < 4; i++) {
-    var px = cropOffsetX + cropCorners[i].x * sx;
-    var py = cropOffsetY + cropCorners[i].y * sy;
-    ctx.beginPath(); ctx.arc(px, py, HANDLE_R, 0, Math.PI * 2);
-    ctx.fillStyle = '#3b82f6'; ctx.fill();
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#fff'; ctx.fill();
+function drawCrop() {
+  var cv = document.getElementById('cropCanvas'), ctx = cv.getContext('2d');
+  var iw = capturedImage.naturalWidth, ih = capturedImage.naturalHeight;
+  var sx = cropDW/iw, sy = cropDH/ih;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH);
+  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.save(); ctx.beginPath();
+  for (var i=0;i<4;i++){var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.closePath(); ctx.clip(); ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH); ctx.restore();
+  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; ctx.beginPath();
+  for(var i=0;i<4;i++){var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.closePath(); ctx.stroke();
+  for(var i=0;i<4;i++){
+    var px=cropOX+cropCorners[i].x*sx, py=cropOY+cropCorners[i].y*sy;
+    ctx.beginPath();ctx.arc(px,py,HR,0,Math.PI*2);ctx.fillStyle='#3b82f6';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   }
 }
 
-function setupCropTouch(cv) {
-  var iw = capturedImage.naturalWidth;
-  var ih = capturedImage.naturalHeight;
-  var sx = cropDisplayW / iw;
-  var sy = cropDisplayH / ih;
-
-  function getPos(e) {
-    var rect = cv.getBoundingClientRect();
-    var touch = e.touches ? e.touches[0] : e;
-    return {
-      x: (touch.clientX - rect.left) * (cv.width / rect.width),
-      y: (touch.clientY - rect.top) * (cv.height / rect.height)
-    };
-  }
-  function findCorner(p) {
-    for (var i = 0; i < 4; i++) {
-      var cx = cropOffsetX + cropCorners[i].x * sx;
-      var cy = cropOffsetY + cropCorners[i].y * sy;
-      if (Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2)) < HANDLE_R * 2.5) return i;
-    }
-    return -1;
-  }
-  cv.ontouchstart = cv.onmousedown = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
-  cv.ontouchmove = cv.onmousemove = function(e) {
-    if (draggingCorner < 0) return; e.preventDefault();
-    var p = getPos(e);
-    cropCorners[draggingCorner].x = Math.max(0, Math.min(iw, Math.round((p.x - cropOffsetX) / sx)));
-    cropCorners[draggingCorner].y = Math.max(0, Math.min(ih, Math.round((p.y - cropOffsetY) / sy)));
-    drawCropOverlay();
-  };
-  cv.ontouchend = cv.onmouseup = function() { draggingCorner = -1; };
+function setupTouch(cv) {
+  var iw=capturedImage.naturalWidth, ih=capturedImage.naturalHeight;
+  var sx=cropDW/iw, sy=cropDH/ih;
+  function pos(e){var r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
+  function hit(p){for(var i=0;i<4;i++){var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy;if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2.5)return i;}return-1;}
+  cv.ontouchstart=cv.onmousedown=function(e){e.preventDefault();dragging=hit(pos(e));};
+  cv.ontouchmove=cv.onmousemove=function(e){if(dragging<0)return;e.preventDefault();var p=pos(e);cropCorners[dragging].x=Math.max(0,Math.min(iw,Math.round((p.x-cropOX)/sx)));cropCorners[dragging].y=Math.max(0,Math.min(ih,Math.round((p.y-cropOY)/sy)));drawCrop();};
+  cv.ontouchend=cv.onmouseup=function(){dragging=-1;};
 }
 
-/* =============================================
-   PERSPECTIVE WARP + 3 RENDUS
-   ============================================= */
+// ===================== PROCESS =====================
+
 function processCrop() {
   if (!capturedImage || cropCorners.length < 4) return;
-  showLoading("Traitement du scan...");
-
+  showLoading('Traitement du scan...');
   setTimeout(function() {
     try {
-      var tl = cropCorners[0], tr = cropCorners[1], br = cropCorners[2], bl = cropCorners[3];
-      var wTop = Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2));
-      var wBot = Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2));
-      var hLft = Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2));
-      var hRgt = Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2));
-      var outW = Math.round(Math.max(wTop, wBot));
-      var outH = Math.round(Math.max(hLft, hRgt));
-      var MAX = 2200;
-      if (outW > MAX) { outH = Math.round(outH * MAX / outW); outW = MAX; }
-      if (outH > MAX) { outW = Math.round(outW * MAX / outH); outH = MAX; }
+      var tl=cropCorners[0],tr=cropCorners[1],br=cropCorners[2],bl=cropCorners[3];
+      var wT=Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2));
+      var wB=Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2));
+      var hL=Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2));
+      var hR=Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2));
+      var oW=Math.round(Math.max(wT,wB)), oH=Math.round(Math.max(hL,hR));
+      var MX=2200;
+      if(oW>MX){oH=Math.round(oH*MX/oW);oW=MX;}
+      if(oH>MX){oW=Math.round(oW*MX/oH);oH=MX;}
 
-      // Source pixels
-      var srcCv = document.createElement('canvas');
-      srcCv.width = capturedImage.naturalWidth;
-      srcCv.height = capturedImage.naturalHeight;
-      srcCv.getContext('2d').drawImage(capturedImage, 0, 0);
-      var srcPx = srcCv.getContext('2d').getImageData(0, 0, srcCv.width, srcCv.height).data;
-      var sW = srcCv.width;
-      var sH = srcCv.height;
+      var sc=document.createElement('canvas');sc.width=capturedImage.naturalWidth;sc.height=capturedImage.naturalHeight;
+      sc.getContext('2d').drawImage(capturedImage,0,0);
+      var sd=sc.getContext('2d').getImageData(0,0,sc.width,sc.height).data;
+      var sW=sc.width,sH=sc.height;
+      var oc=document.createElement('canvas');oc.width=oW;oc.height=oH;
+      var octx=oc.getContext('2d'),od=octx.createImageData(oW,oH),op=od.data;
 
-      // Bilinear warp
-      var outCv = document.createElement('canvas');
-      outCv.width = outW; outCv.height = outH;
-      var outCtx = outCv.getContext('2d');
-      var outData = outCtx.createImageData(outW, outH);
-      var outPx = outData.data;
-
-      for (var oy = 0; oy < outH; oy++) {
-        var v = oy / Math.max(1, outH - 1);
-        for (var ox = 0; ox < outW; ox++) {
-          var u = ox / Math.max(1, outW - 1);
-          var sX = (1-u)*(1-v)*tl.x + u*(1-v)*tr.x + u*v*br.x + (1-u)*v*bl.x;
-          var sY = (1-u)*(1-v)*tl.y + u*(1-v)*tr.y + u*v*br.y + (1-u)*v*bl.y;
-          var fx = Math.max(0, Math.min(Math.floor(sX), sW-1));
-          var fy = Math.max(0, Math.min(Math.floor(sY), sH-1));
-          var cx = Math.min(fx+1, sW-1);
-          var cy = Math.min(fy+1, sH-1);
-          var dx = sX - fx;
-          var dy = sY - fy;
-          var oi = (oy * outW + ox) * 4;
-          for (var ch = 0; ch < 3; ch++) {
-            outPx[oi+ch] = Math.round(
-              srcPx[(fy*sW+fx)*4+ch]*(1-dx)*(1-dy) +
-              srcPx[(fy*sW+cx)*4+ch]*dx*(1-dy) +
-              srcPx[(cy*sW+fx)*4+ch]*(1-dx)*dy +
-              srcPx[(cy*sW+cx)*4+ch]*dx*dy
-            );
-          }
-          outPx[oi+3] = 255;
-        }
-      }
-      outCtx.putImageData(outData, 0, 0);
+      for(var y=0;y<oH;y++){var v=y/Math.max(1,oH-1);for(var x=0;x<oW;x++){var u=x/Math.max(1,oW-1);
+        var sX=(1-u)*(1-v)*tl.x+u*(1-v)*tr.x+u*v*br.x+(1-u)*v*bl.x;
+        var sY=(1-u)*(1-v)*tl.y+u*(1-v)*tr.y+u*v*br.y+(1-u)*v*bl.y;
+        var fx=Math.max(0,Math.min(Math.floor(sX),sW-1)),fy=Math.max(0,Math.min(Math.floor(sY),sH-1));
+        var cx=Math.min(fx+1,sW-1),cy=Math.min(fy+1,sH-1);
+        var dx=sX-fx,dy=sY-fy,oi=(y*oW+x)*4;
+        for(var ch=0;ch<3;ch++){op[oi+ch]=Math.round(sd[(fy*sW+fx)*4+ch]*(1-dx)*(1-dy)+sd[(fy*sW+cx)*4+ch]*dx*(1-dy)+sd[(cy*sW+fx)*4+ch]*(1-dx)*dy+sd[(cy*sW+cx)*4+ch]*dx*dy);}
+        op[oi+3]=255;
+      }}
+      octx.putImageData(od,0,0);
 
       // Grayscale
-      var gray = new Uint8Array(outW * outH);
-      for (var i = 0, j = 0; i < outPx.length; i += 4, j++) {
-        gray[j] = Math.round(0.299 * outPx[i] + 0.587 * outPx[i+1] + 0.114 * outPx[i+2]);
-      }
+      var gray=new Uint8Array(oW*oH);
+      for(var i=0,j=0;i<op.length;i+=4,j++){gray[j]=Math.round(0.299*op[i]+0.587*op[i+1]+0.114*op[i+2]);}
 
-      // === 1. SCAN (Bradley threshold + anti-alias) ===
-      var binArr = bradleyThreshold(gray, outW, outH);
-      var scanCv = document.createElement('canvas');
-      scanCv.width = outW; scanCv.height = outH;
-      var scanCtx = scanCv.getContext('2d');
-      var scanData = scanCtx.createImageData(outW, outH);
-      var scanPx = scanData.data;
-      for (var i = 0, j = 0; j < binArr.length; j++, i += 4) {
-        if (binArr[j] === 0) {
-          var tv = Math.min(gray[j] * 0.5, 60);
-          scanPx[i] = scanPx[i+1] = scanPx[i+2] = tv;
+      // ===== 1. SCAN : Background division (meilleur que Bradley) =====
+      var blurred = boxBlur(gray, oW, oH, Math.max(20, Math.round(Math.min(oW,oH)/10)));
+      var scanCv=document.createElement('canvas');scanCv.width=oW;scanCv.height=oH;
+      var scanCtx=scanCv.getContext('2d'),scanD=scanCtx.createImageData(oW,oH),sp=scanD.data;
+      for(var i=0,j=0;j<gray.length;j++,i+=4){
+        var bg=Math.max(blurred[j],1);
+        var norm=Math.round((gray[j]/bg)*255);
+        norm=Math.max(0,Math.min(255,norm));
+        // Seuil : texte < 190 → noir doux, fond > 190 → blanc
+        if(norm<190){
+          sp[i]=sp[i+1]=sp[i+2]=Math.max(0,Math.min(norm*0.35,50));
         } else {
-          scanPx[i] = scanPx[i+1] = scanPx[i+2] = 255;
+          sp[i]=sp[i+1]=sp[i+2]=255;
         }
-        scanPx[i+3] = 255;
+        sp[i+3]=255;
       }
-      scanCtx.putImageData(scanData, 0, 0);
-      resultScanURL = scanCv.toDataURL('image/jpeg', 0.88);
+      scanCtx.putImageData(scanD,0,0);
+      resScanURL=scanCv.toDataURL('image/jpeg',0.88);
 
-      // === 2. COLOR (gentle clean for Gemini) ===
-      var colCv = document.createElement('canvas');
-      colCv.width = outW; colCv.height = outH;
-      var colCtx = colCv.getContext('2d');
-      colCtx.drawImage(outCv, 0, 0);
-      var colData = colCtx.getImageData(0, 0, outW, outH);
-      var colPx = colData.data;
-      // White balance
-      var hist = new Uint32Array(256);
-      for (var j = 0; j < gray.length; j++) hist[gray[j]]++;
-      var tgt = Math.round(gray.length * 0.92);
-      var cum = 0;
-      var wp = 240;
-      for (var v2 = 0; v2 < 256; v2++) { cum += hist[v2]; if (cum >= tgt) { wp = Math.max(v2, 120); break; } }
-      var scl = Math.min(248 / wp, 1.25);
-      for (var i = 0; i < colPx.length; i += 4) {
-        for (var ch = 0; ch < 3; ch++) {
-          var val = colPx[i+ch] * scl;
-          var norm = val / 255;
-          norm = norm < 0.5 ? 2*norm*norm : 1 - 2*(1-norm)*(1-norm);
-          colPx[i+ch] = Math.max(0, Math.min(255, Math.round(norm * 255)));
-        }
-      }
-      colCtx.putImageData(colData, 0, 0);
-      resultColorURL = colCv.toDataURL('image/jpeg', 0.88);
-      resultColorB64 = resultColorURL.split(',')[1];
+      // ===== 2. COLOR (pour Gemini) =====
+      var colCv=document.createElement('canvas');colCv.width=oW;colCv.height=oH;
+      var colCtx=colCv.getContext('2d');colCtx.drawImage(oc,0,0);
+      var colD=colCtx.getImageData(0,0,oW,oH),cp=colD.data;
+      var hist=new Uint32Array(256);for(var j=0;j<gray.length;j++)hist[gray[j]]++;
+      var tgt=Math.round(gray.length*0.92),cum=0,wp=240;
+      for(var v2=0;v2<256;v2++){cum+=hist[v2];if(cum>=tgt){wp=Math.max(v2,120);break;}}
+      var scl=Math.min(248/wp,1.25);
+      for(var i=0;i<cp.length;i+=4){for(var ch=0;ch<3;ch++){var val=cp[i+ch]*scl;var n=val/255;n=n<0.5?2*n*n:1-2*(1-n)*(1-n);cp[i+ch]=Math.max(0,Math.min(255,Math.round(n*255)));}}
+      colCtx.putImageData(colD,0,0);
+      resColorURL=colCv.toDataURL('image/jpeg',0.88);
+      resColorB64=resColorURL.split(',')[1];
 
-      // === 3. GRAY ===
-      var grayCv = document.createElement('canvas');
-      grayCv.width = outW; grayCv.height = outH;
-      var grayCtx = grayCv.getContext('2d');
-      var grayData = grayCtx.createImageData(outW, outH);
-      var grayPx = grayData.data;
-      for (var i = 0, j = 0; j < gray.length; j++, i += 4) {
-        var gv = Math.max(0, Math.min(255, 1.4 * (gray[j] - 60) + 30));
-        grayPx[i] = grayPx[i+1] = grayPx[i+2] = gv;
-        grayPx[i+3] = 255;
-      }
-      grayCtx.putImageData(grayData, 0, 0);
-      resultGrayURL = grayCv.toDataURL('image/jpeg', 0.88);
+      // ===== 3. GRAY =====
+      var grayCv=document.createElement('canvas');grayCv.width=oW;grayCv.height=oH;
+      var grayCtx=grayCv.getContext('2d'),grayD=grayCtx.createImageData(oW,oH),gp=grayD.data;
+      for(var i=0,j=0;j<gray.length;j++,i+=4){var gv=Math.max(0,Math.min(255,1.4*(gray[j]-60)+30));gp[i]=gp[i+1]=gp[i+2]=gv;gp[i+3]=255;}
+      grayCtx.putImageData(grayD,0,0);
+      resGrayURL=grayCv.toDataURL('image/jpeg',0.88);
 
-      // Show preview
-      currentMode = 'scan';
-      updateModeButtons();
-      document.getElementById('previewImg').src = resultScanURL;
-      hideLoading();
-      showScreen('prevScreen');
-
-    } catch(err) {
-      hideLoading();
-      showToast("Erreur: " + err.message, true);
-    }
+      curMode='scan'; updateModes();
+      document.getElementById('previewImg').src=resScanURL;
+      hideLoading(); showScreen('prevScreen');
+    } catch(err) { hideLoading(); showToast('Erreur: '+err.message,true); }
   }, 50);
 }
 
-function bradleyThreshold(gray, w, h) {
-  var integral = new Float64Array(w * h);
+// Box blur (rapide, pour estimation du fond)
+function boxBlur(src, w, h, radius) {
+  var out = new Uint8Array(w * h);
+  var tmp = new Uint8Array(w * h);
+  var r = radius;
+  // Horizontal pass
   for (var y = 0; y < h; y++) {
-    var rowSum = 0;
+    var sum = 0, count = 0;
+    for (var x = 0; x < r && x < w; x++) { sum += src[y*w+x]; count++; }
     for (var x = 0; x < w; x++) {
-      rowSum += gray[y * w + x];
-      integral[y * w + x] = rowSum + (y > 0 ? integral[(y-1) * w + x] : 0);
+      if (x + r < w) { sum += src[y*w+x+r]; count++; }
+      if (x - r > 0) { sum -= src[y*w+x-r-1]; count--; }
+      tmp[y*w+x] = Math.round(sum / count);
     }
   }
-  var output = new Uint8Array(w * h);
-  var radius = Math.max(8, Math.round(Math.min(w, h) / 8));
-  var tFactor = 0.85;
-  for (var y = 0; y < h; y++) {
-    for (var x = 0; x < w; x++) {
-      var x1 = Math.max(0, x - radius);
-      var y1 = Math.max(0, y - radius);
-      var x2 = Math.min(w - 1, x + radius);
-      var y2 = Math.min(h - 1, y + radius);
-      var count = (x2-x1+1) * (y2-y1+1);
-      var sum = integral[y2*w+x2];
-      if (x1 > 0) sum -= integral[y2*w+(x1-1)];
-      if (y1 > 0) sum -= integral[(y1-1)*w+x2];
-      if (x1 > 0 && y1 > 0) sum += integral[(y1-1)*w+(x1-1)];
-      output[y*w+x] = (gray[y*w+x] < (sum/count) * tFactor) ? 0 : 255;
+  // Vertical pass
+  for (var x = 0; x < w; x++) {
+    var sum = 0, count = 0;
+    for (var y = 0; y < r && y < h; y++) { sum += tmp[y*w+x]; count++; }
+    for (var y = 0; y < h; y++) {
+      if (y + r < h) { sum += tmp[(y+r)*w+x]; count++; }
+      if (y - r > 0) { sum -= tmp[(y-r-1)*w+x]; count--; }
+      out[y*w+x] = Math.round(sum / count);
     }
   }
-  return output;
+  return out;
 }
 
-/* =============================================
-   PREVIEW
-   ============================================= */
+// ===================== PREVIEW =====================
+
 function switchMode(mode) {
-  currentMode = mode;
-  updateModeButtons();
-  var img = document.getElementById('previewImg');
-  if (mode === 'scan') img.src = resultScanURL;
-  else if (mode === 'color') img.src = resultColorURL;
-  else img.src = resultGrayURL;
+  curMode = mode; updateModes();
+  document.getElementById('previewImg').src = mode==='scan'?resScanURL:mode==='color'?resColorURL:resGrayURL;
 }
-function updateModeButtons() {
-  document.getElementById('modeScan').className = 'prev-mode-btn' + (currentMode === 'scan' ? ' active' : '');
-  document.getElementById('modeColor').className = 'prev-mode-btn' + (currentMode === 'color' ? ' active' : '');
-  document.getElementById('modeGray').className = 'prev-mode-btn' + (currentMode === 'gray' ? ' active' : '');
+function updateModes() {
+  document.getElementById('modeScan').className = 'pmbtn' + (curMode==='scan'?' active':'');
+  document.getElementById('modeColor').className = 'pmbtn' + (curMode==='color'?' active':'');
+  document.getElementById('modeGray').className = 'pmbtn' + (curMode==='gray'?' active':'');
 }
 
 function addPage() {
-  if (!resultColorB64) return;
-  var sizeKB = Math.round(resultColorB64.length * 0.75 / 1024);
-  pages.push({ scanURL: resultScanURL, colorB64: resultColorB64, mime: 'image/jpeg', size: sizeKB });
-  stopCamera();
-  showScreen('homeScreen');
-  renderGallery();
-  showToast("Page " + pages.length + " — " + sizeKB + " KB ✓", false);
+  if (!resColorB64) return;
+  var kb = Math.round(resColorB64.length * 0.75 / 1024);
+  pages.push({ scanURL:resScanURL, colorB64:resColorB64, mime:'image/jpeg', size:kb });
+  stopCam(); showScreen('homeScreen'); renderGallery();
+  showToast('Page ' + pages.length + ' — ' + kb + ' KB ✓', false);
 }
 
-/* =============================================
-   GALLERY
-   ============================================= */
+// ===================== GALLERY =====================
+
 function renderGallery() {
-  var grid = document.getElementById('gallery');
-  var empty = document.getElementById('emptyState');
-  if (pages.length === 0) {
-    grid.innerHTML = ''; empty.style.display = 'block';
-    document.getElementById('sendButton').disabled = true; updateStats(); return;
+  var g=document.getElementById('gallery'), e=document.getElementById('emptyState');
+  if (!pages.length) { g.innerHTML=''; e.style.display='block'; document.getElementById('sendButton').disabled=true; updateStats(); return; }
+  e.style.display='none'; document.getElementById('sendButton').disabled=false;
+  var html='';
+  for (var i=0;i<pages.length;i++) {
+    html+='<div class="home-card"><span class="badge">P'+(i+1)+' · '+pages[i].size+'KB</span><button class="remove" onclick="event.stopPropagation();removePage('+i+')">✕</button><img src="'+pages[i].scanURL+'"></div>';
   }
-  empty.style.display = 'none';
-  document.getElementById('sendButton').disabled = false;
-  var html = '';
-  for (var i = 0; i < pages.length; i++) {
-    html += '<div class="home-card">';
-    html += '<span class="badge">P' + (i+1) + ' · ' + pages[i].size + 'KB</span>';
-    html += '<button class="remove" onclick="event.stopPropagation();removePage(' + i + ')">✕</button>';
-    html += '<img src="' + pages[i].scanURL + '">';
-    html += '</div>';
-  }
-  grid.innerHTML = html;
-  updateStats();
+  g.innerHTML=html; updateStats();
 }
-function removePage(i) { pages.splice(i, 1); renderGallery(); }
+function removePage(i) { pages.splice(i,1); renderGallery(); }
 function updateStats() {
-  document.getElementById('pageCount').textContent = pages.length;
-  var t = 0; for (var i = 0; i < pages.length; i++) t += pages[i].size;
-  document.getElementById('totalSize').textContent = t > 1024 ? (t/1024).toFixed(1)+' MB' : t+' KB';
+  document.getElementById('pageCount').textContent=pages.length;
+  var t=0;for(var i=0;i<pages.length;i++)t+=pages[i].size;
+  document.getElementById('totalSize').textContent=t>1024?(t/1024).toFixed(1)+' MB':t+' KB';
 }
 
-/* =============================================
-   SEND
-   ============================================= */
+// ===================== SEND =====================
+
 function sendPages() {
   if (!pages.length) return;
   if (!GAS_URL) { showScreen('configScreen'); return; }
-  showLoading("Envoi de " + pages.length + " page(s)...");
-  var uploadPages = [];
-  for (var i = 0; i < pages.length; i++) {
-    uploadPages.push({ base64: pages[i].colorB64, mime: pages[i].mime });
-  }
-  var payload = JSON.stringify({ action: "upload", pages: uploadPages });
-
-  fetch(GAS_URL, { method: 'POST', body: payload, headers: { 'Content-Type': 'text/plain' }, redirect: 'follow' })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    hideLoading();
-    if (d.success) { pages = []; renderGallery(); showToast(d.message, false); }
-    else showToast(d.error || "Erreur", true);
-  })
-  .catch(function() {
-    fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: payload })
-    .then(function() { hideLoading(); pages = []; renderGallery(); showToast("✅ Envoyé !", false); })
-    .catch(function() { hideLoading(); showToast("Erreur réseau", true); });
+  showLoading('Envoi de '+pages.length+' page(s)...');
+  var up=[];for(var i=0;i<pages.length;i++){up.push({base64:pages[i].colorB64,mime:pages[i].mime});}
+  var payload=JSON.stringify({action:'upload',pages:up});
+  fetch(GAS_URL,{method:'POST',body:payload,headers:{'Content-Type':'text/plain'},redirect:'follow'})
+  .then(function(r){return r.json();})
+  .then(function(d){hideLoading();if(d.success){pages=[];renderGallery();showToast(d.message,false);}else{showToast(d.error||'Erreur',true);}})
+  .catch(function(){
+    fetch(GAS_URL,{method:'POST',mode:'no-cors',body:payload})
+    .then(function(){hideLoading();pages=[];renderGallery();showToast('✅ Envoyé !',false);})
+    .catch(function(){hideLoading();showToast('Erreur réseau',true);});
   });
 }
 
-/* =============================================
-   HELPERS
-   ============================================= */
-function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('active'); }
-function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
-function showToast(m, err) {
-  var el = document.getElementById('toastEl');
-  el.textContent = m;
-  el.className = 'toast ' + (err ? 'toast-err' : 'toast-ok');
-  setTimeout(function() { el.classList.add('visible'); }, 10);
-  setTimeout(function() { el.classList.remove('visible'); }, 3000);
+// ===================== HELPERS =====================
+
+function showLoading(t){document.getElementById('loadingText').textContent=t;document.getElementById('loadingOverlay').classList.add('active');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
+function showToast(m,err){
+  var el=document.getElementById('toastEl');el.textContent=m;
+  el.className='toast '+(err?'toast-err':'toast-ok');
+  setTimeout(function(){el.classList.add('visible');},10);
+  setTimeout(function(){el.classList.remove('visible');},3000);
 }
 </script>
 </body>
