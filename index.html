@@ -96,11 +96,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
       <div class="kpi-card"><small>Bordereaux</small><p id="kpi-orders">0</p><span>Livrées / Traitées</span></div>
     </div>
     <div class="chart-box">
-      <h3>Suivi de l'évolution des tarifs unitaire</h3>
+      <h3>Suivi de l'évolution des tarifs unitaires</h3>
       <select id="productSelect" class="selector-input" onchange="updateProductChart()"><option>Sélectionne un article...</option></select>
       <div id="chartContainer" style="height:120px;display:flex;align-items:end;gap:14px;padding:10px 0;border-bottom:1px solid #333"></div>
     </div>
-    <button class="btn btn-b" onclick="fetchStats()" style="width:100%">🔄 Actualiser les indicateurs</button>
+    <button class="btn btn-b" onclick="fetchStats()" style="width:100%">🔄 Actualiser les indicators</button>
   </div>
 
   <div class="screen" id="tab-rank">
@@ -157,7 +157,6 @@ function switchTab(tabId) {
 
 function openCamera() {
   showScreen('camScreen');
-  // MODIFICATION COMPATIBILITÉ MULTI-LENTILLES : Suppression des résolutions trop élevées pour forcer le capteur grand-angle natif standard
   navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
     audio: false
@@ -215,12 +214,12 @@ function drawCrop() {
   ctx.clearRect(0,0,cv.width,cv.height); ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH);
   ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,cv.width,cv.height);
   ctx.save(); ctx.beginPath();
-  for (var i=0;i<4;i++){ var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+  for (var i=0; i<4; i++){ var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
   ctx.closePath(); ctx.clip(); ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH); ctx.restore();
   ctx.strokeStyle='#2563eb'; ctx.lineWidth=3; ctx.beginPath();
-  for(var i=0;i<4;i++){ var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+  for(var i=0; i<4; i++){ var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
   ctx.closePath(); ctx.stroke();
-  for(var i=0;i<4;i++){
+  for(var i=0; i<4; i++){
     var px=cropOX+cropCorners[i].x*sx, py=cropOY+cropCorners[i].y*sy;
     ctx.beginPath();ctx.arc(px,py,HR,0,Math.PI*2);ctx.fillStyle='#2563eb';ctx.fill();
   }
@@ -231,7 +230,7 @@ function setupTouch(cv) {
   function pos(e){ var r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
   cv.ontouchstart=cv.onmousedown=function(e){
     e.preventDefault(); var p=pos(e); dragging=-1;
-    for(var i=0;i<4;i++){ var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy; if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2.5){dragging=i;break;} }
+    for(var i=0; i<4; i++){ var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy; if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2.5){dragging=i;break;} }
   };
   cv.ontouchmove=cv.onmousemove=function(e){ if(dragging<0)return; e.preventDefault(); var p=pos(e); cropCorners[dragging].x=Math.max(0,Math.min(capturedImage.naturalWidth,Math.round((p.x-cropOX)/sx))); cropCorners[dragging].y=Math.max(0,Math.min(capturedImage.naturalHeight,Math.round((p.y-cropOY)/sy))); drawCrop(); };
   cv.ontouchend=cv.onmouseup=function(){dragging=-1;};
@@ -251,7 +250,7 @@ function processCrop() {
     var oc=document.createElement('canvas'); oc.width=oW; oc.height=oH;
     var octx=oc.getContext('2d'), od=octx.createImageData(oW,oH), op=od.data;
 
-    for(var y=0;y<oH;y++){ var v=y/Math.max(1,oH-1); for(var x=0;x<oW;x++){ var u=x/Math.max(1,oW-1);
+    for(var y=0; y<oH; y++){ var v=y/Math.max(1,oH-1); for(var x=0; x<oW; x++){ var u=x/Math.max(1,oW-1);
       var sX=(1-u)*(1-v)*tl.x+u*(1-v)*tr.x+u*v*br.x+(1-u)*v*bl.x;
       var sY=(1-u)*(1-v)*tl.y+u*(1-v)*tr.y+u*v*br.y+(1-u)*v*bl.y;
       var fx=Math.max(0,Math.min(Math.floor(sX),sc.width-1)), fy=Math.max(0,Math.min(Math.floor(sY),sc.height-1));
@@ -293,11 +292,9 @@ function fetchStats() {
     document.getElementById('kpi-total').textContent = d.totalHt.toFixed(2) + " €";
     document.getElementById('kpi-orders').textContent = d.totalInvoices;
     
-    // Remplissage Sélecteur de produits
     var select = document.getElementById('productSelect');
     select.innerHTML = '<option value="">Choisir un ingrédient...</option>' + Object.keys(d.produits).map(p => `<option value="${p}">${p}</option>`).join('');
     
-    // Remplissage Classement Fournisseurs
     var rankContainer = document.getElementById('supplierRanking');
     var maxVal = Math.max(...d.fournisseurs.map(f => f.total), 1);
     rankContainer.innerHTML = d.fournisseurs.map(f => `
@@ -316,10 +313,10 @@ function updateProductChart() {
   container.innerHTML = '';
   if(!pName || !globalStats || !globalStats.produits[pName]) return;
   
-  var history = globalStats.produits[pName].slice(-5); // Les 5 derniers prix
+  var history = globalStats.produits[pName].slice(-5);
   var maxPrice = Math.max(...history.map(h => h.prix), 1);
   
-  container.innerHTML = history.map h => `
+  container.innerHTML = history.map(h => `
     <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; height:100%">
       <span style="font-size:0.55rem; color:#fff">${h.prix.toFixed(2)}€</span>
       <div style="width:16px; background:#2563eb; height:${(h.prix/maxPrice)*100}px; border-radius:3px 3px 0 0; margin:4px 0"></div>
