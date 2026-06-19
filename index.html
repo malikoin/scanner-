@@ -9,26 +9,22 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#fff; height:100dvh; overflow:hidden; user-select:none; }
-
-/* === SCREENS === */
 .screen { position:fixed; inset:0; display:none; flex-direction:column; background:#000; }
 .screen.active { display:flex; }
-
-/* === BUTTONS === */
 .btn { padding:13px 20px; border-radius:12px; border:none; font-weight:600; font-size:0.8rem; cursor:pointer; text-align:center; }
 .btn:active { transform:scale(0.96); }
 .btn-w { background:#fff; color:#000; }
 .btn-b { background:#3b82f6; color:#fff; }
 .btn-b:disabled { background:#1a1a1a; color:#333; }
 
-/* === CONFIG SCREEN === */
+/* CONFIG */
 #configScreen { justify-content:center; align-items:center; padding:24px; z-index:90; }
 .config-box { width:100%; max-width:340px; text-align:center; }
 .config-box h2 { font-size:1rem; color:#3b82f6; margin-bottom:8px; }
 .config-box p { font-size:0.7rem; color:#666; margin-bottom:16px; line-height:1.5; }
 .config-box input { width:100%; padding:13px; border-radius:10px; border:1px solid #333; background:#111; color:#fff; font-size:0.72rem; font-family:monospace; margin-bottom:12px; }
 
-/* === HOME SCREEN === */
+/* HOME */
 .home-header { padding:12px 14px 8px; text-align:center; border-bottom:1px solid #151515; }
 .home-header h1 { font-size:0.85rem; font-weight:700; letter-spacing:1.5px; color:#3b82f6; }
 .home-header small { font-size:0.5rem; color:#444; letter-spacing:2px; }
@@ -45,7 +41,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 .home-bar { position:fixed; bottom:0; left:0; right:0; padding:10px 12px; padding-bottom:max(10px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, #000 25%); display:flex; gap:8px; z-index:10; }
 .home-bar .btn { flex:1; }
 
-/* === CAMERA SCREEN === */
+/* CAMERA */
 #camScreen video { width:100%; height:100%; object-fit:cover; }
 .cam-overlay { position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
 .cam-guide { width:86%; max-width:360px; aspect-ratio:210/297; border:2px solid rgba(59,130,246,0.5); border-radius:6px; box-shadow:0 0 0 3000px rgba(0,0,0,0.35); position:relative; }
@@ -62,9 +58,8 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 .cam-icon-on { background:#f59e0b; color:#000; }
 .cam-bottom { position:absolute; bottom:0; left:0; right:0; padding:12px 20px; padding-bottom:max(16px, env(safe-area-inset-bottom)); background:linear-gradient(transparent, rgba(0,0,0,0.5)); z-index:5; display:flex; flex-direction:column; align-items:center; gap:10px; }
 .cam-hint { font-size:0.62rem; color:rgba(255,255,255,0.4); }
-/* Zoom slider */
 .cam-zoom { display:flex; align-items:center; gap:8px; width:70%; max-width:250px; }
-.cam-zoom label { font-size:0.6rem; color:#aaa; }
+.cam-zoom label { font-size:0.6rem; color:#aaa; white-space:nowrap; }
 .cam-zoom input[type=range] { flex:1; -webkit-appearance:none; height:3px; background:#333; border-radius:2px; outline:none; }
 .cam-zoom input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#3b82f6; border:2px solid #fff; }
 .shutter-btn { width:64px; height:64px; border-radius:50%; border:4px solid #fff; background:transparent; cursor:pointer; position:relative; }
@@ -72,7 +67,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 .shutter-btn:active { transform:scale(0.88); }
 .cam-flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:3; }
 
-/* === CROP SCREEN === */
+/* CROP */
 .crop-header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid #151515; }
 .crop-header h3 { font-size:0.78rem; }
 .crop-header span { font-size:0.52rem; color:#555; }
@@ -82,7 +77,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 .crop-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
 .crop-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
 
-/* === PREVIEW SCREEN === */
+/* PREVIEW */
 .prev-modes { display:flex; justify-content:center; gap:6px; padding:8px; border-bottom:1px solid #151515; }
 .prev-mode-btn { padding:7px 14px; border-radius:8px; border:1px solid #252525; background:#0a0a0a; color:#666; font-size:0.65rem; font-weight:600; cursor:pointer; font-family:inherit; }
 .prev-mode-btn.active { background:#3b82f6; border-color:#3b82f6; color:#fff; }
@@ -91,7 +86,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 .prev-bar { padding:8px 12px; padding-bottom:max(8px, env(safe-area-inset-bottom)); border-top:1px solid #151515; display:flex; gap:8px; }
 .prev-bar .btn { flex:1; padding:12px; font-size:0.75rem; }
 
-/* === OVERLAY + TOAST === */
+/* OVERLAY + TOAST */
 .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; }
 .overlay.active { opacity:1; pointer-events:all; }
 .spinner { width:36px; height:36px; border:3px solid #1a1a1a; border-top-color:#3b82f6; border-radius:50%; animation:spin 0.7s linear infinite; }
@@ -105,7 +100,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
 </head>
 <body>
 
-<!-- ========== CONFIG ========== -->
+<!-- CONFIG -->
 <div class="screen" id="configScreen">
   <div class="config-box">
     <h2>⚙️ Configuration</h2>
@@ -115,20 +110,12 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
   </div>
 </div>
 
-<!-- ========== HOME ========== -->
+<!-- HOME -->
 <div class="screen active" id="homeScreen">
-  <div class="home-header">
-    <h1>VAZYGOOD SCANNER</h1>
-    <small>SCAN PRO · DRIVE</small>
-  </div>
-  <div class="home-stats">
-    PAGES <b id="pageCount">0</b>&nbsp;&nbsp;TAILLE <b id="totalSize">0 KB</b>
-  </div>
+  <div class="home-header"><h1>VAZYGOOD SCANNER</h1><small>SCAN PRO · DRIVE</small></div>
+  <div class="home-stats">PAGES <b id="pageCount">0</b>&nbsp;&nbsp;TAILLE <b id="totalSize">0 KB</b></div>
   <div class="home-feed">
-    <div id="emptyState" class="home-empty">
-      <div style="font-size:2rem">📄</div>
-      <p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p>
-    </div>
+    <div id="emptyState" class="home-empty"><div style="font-size:2rem">📄</div><p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p></div>
     <div class="home-grid" id="gallery"></div>
   </div>
   <div class="home-bar">
@@ -137,11 +124,11 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
   </div>
 </div>
 
-<!-- ========== CAMERA ========== -->
+<!-- CAMERA -->
 <div class="screen" id="camScreen">
   <video id="videoEl" autoplay playsinline muted></video>
-  <div class="cam-overlay">
-    <div class="cam-guide">
+  <div class="cam-overlay" id="camOverlay">
+    <div class="cam-guide" id="camGuide">
       <div class="cam-corner tl"></div>
       <div class="cam-corner tr"></div>
       <div class="cam-corner br"></div>
@@ -151,7 +138,7 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
   <div class="cam-topbar">
     <h3>📷 Scanner</h3>
     <div class="cam-icons">
-      <button class="cam-icon cam-icon-off" id="flashBtn" onclick="toggleFlash()" style="display:none">🔦</button>
+      <button class="cam-icon cam-icon-off" id="flashBtn" onclick="toggleFlash()">🔦</button>
       <button class="cam-icon cam-icon-off" onclick="closeCamera()">✕</button>
     </div>
   </div>
@@ -167,18 +154,10 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
   <div class="cam-flash" id="flashOverlay"></div>
 </div>
 
-<!-- ========== CROP ========== -->
+<!-- CROP -->
 <div class="screen" id="cropScreen">
-  <div class="crop-header">
-    <div>
-      <h3>Recadrer le document</h3>
-      <span>Déplace les 4 coins pour ajuster</span>
-    </div>
-    <button class="close-btn" onclick="cancelCrop()">✕</button>
-  </div>
-  <div class="crop-canvas-wrap" id="cropArea">
-    <canvas id="cropCanvas"></canvas>
-  </div>
+  <div class="crop-header"><div><h3>Recadrer le document</h3><span>Déplace les 4 coins</span></div><button class="close-btn" onclick="cancelCrop()">✕</button></div>
+  <div class="crop-canvas-wrap" id="cropArea"><canvas id="cropCanvas"></canvas></div>
   <div class="crop-bar">
     <button class="btn btn-w" onclick="cancelCrop()">Annuler</button>
     <button class="btn btn-w" onclick="resetCorners()">↺ Reset</button>
@@ -186,65 +165,45 @@ body { font-family:-apple-system,system-ui,sans-serif; background:#000; color:#f
   </div>
 </div>
 
-<!-- ========== PREVIEW ========== -->
+<!-- PREVIEW -->
 <div class="screen" id="prevScreen">
-  <div class="crop-header">
-    <h3>Aperçu du scan</h3>
-    <button class="close-btn" onclick="goBackToCamera()">✕</button>
-  </div>
+  <div class="crop-header"><h3>Aperçu du scan</h3><button class="close-btn" onclick="goBackToCamera()">✕</button></div>
   <div class="prev-modes">
     <button class="prev-mode-btn active" id="modeScan" onclick="switchMode('scan')">📄 Scanner</button>
     <button class="prev-mode-btn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button>
     <button class="prev-mode-btn" id="modeGray" onclick="switchMode('gray')">⚫ Gris</button>
   </div>
-  <div class="prev-image">
-    <img id="previewImg" alt="Aperçu">
-  </div>
+  <div class="prev-image"><img id="previewImg" alt="Aperçu"></div>
   <div class="prev-bar">
     <button class="btn btn-w" onclick="goBackToCamera()">↺ Refaire</button>
     <button class="btn btn-b" onclick="addPage()">Ajouter ✓</button>
   </div>
 </div>
 
-<!-- OVERLAY & TOAST -->
-<div class="overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <p id="loadingText"></p>
-</div>
+<div class="overlay" id="loadingOverlay"><div class="spinner"></div><p id="loadingText"></p></div>
 <div class="toast" id="toastEl"></div>
 
 <script>
 /* =============================================
-   CONFIGURATION
+   CONFIG
    ============================================= */
 var GAS_URL = localStorage.getItem('gas_url') || '';
-if (!GAS_URL) {
-  showScreen('configScreen');
-}
+if (!GAS_URL) showScreen('configScreen');
 
 function saveConfig() {
   var url = document.getElementById('configInput').value.trim();
-  if (!url || url.indexOf('https://') !== 0) {
-    showToast("URL invalide", true);
-    return;
-  }
+  if (!url || url.indexOf('https://') !== 0) { showToast("URL invalide", true); return; }
   GAS_URL = url;
   localStorage.setItem('gas_url', url);
   showScreen('homeScreen');
   showToast("Configuré ✓", false);
 }
 
-/* =============================================
-   NAVIGATION
-   ============================================= */
-function showScreen(screenId) {
+function showScreen(id) {
   var screens = document.querySelectorAll('.screen');
   for (var i = 0; i < screens.length; i++) {
-    if (screens[i].id === screenId) {
-      screens[i].classList.add('active');
-    } else {
-      screens[i].classList.remove('active');
-    }
+    if (screens[i].id === id) screens[i].classList.add('active');
+    else screens[i].classList.remove('active');
   }
 }
 
@@ -255,57 +214,34 @@ var pages = [];
 var cameraStream = null;
 var videoTrack = null;
 var torchActive = false;
-var torchSupported = false;
-var zoomSupported = false;
-var zoomMin = 1;
-var zoomMax = 1;
-
 var capturedImage = null;
 var cropCorners = [];
-var cropDisplayW = 0;
-var cropDisplayH = 0;
-var cropOffsetX = 0;
-var cropOffsetY = 0;
+var cropDisplayW = 0, cropDisplayH = 0, cropOffsetX = 0, cropOffsetY = 0;
 var draggingCorner = -1;
-var HANDLE_RADIUS = 22;
-
-var resultScanURL = '';
-var resultColorURL = '';
-var resultGrayURL = '';
-var resultColorB64 = '';
+var HANDLE_R = 22;
+var resultScanURL = '', resultColorURL = '', resultGrayURL = '', resultColorB64 = '';
 var currentMode = 'scan';
 
 /* =============================================
    CAMERA
    ============================================= */
 function openCamera() {
-  if (!GAS_URL) {
-    showScreen('configScreen');
-    return;
-  }
+  if (!GAS_URL) { showScreen('configScreen'); return; }
   showScreen('camScreen');
   torchActive = false;
-  updateFlashButton();
+  document.getElementById('flashBtn').className = 'cam-icon cam-icon-off';
 
   var video = document.getElementById('videoEl');
-
   navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: 'environment',
-      width: { ideal: 1920 },
-      height: { ideal: 1440 }
-    },
+    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1440 } },
     audio: false
   })
   .then(function(stream) {
     cameraStream = stream;
     videoTrack = stream.getVideoTracks()[0];
     video.srcObject = stream;
-
-    // Wait for track to be ready then check capabilities
-    setTimeout(function() {
-      checkCameraCapabilities();
-    }, 800);
+    // Check zoom after camera ready
+    setTimeout(checkZoom, 1000);
   })
   .catch(function(err) {
     showScreen('homeScreen');
@@ -313,99 +249,55 @@ function openCamera() {
   });
 }
 
-function checkCameraCapabilities() {
+function checkZoom() {
   if (!videoTrack) return;
-
   try {
     var caps = videoTrack.getCapabilities();
-
-    // Flash/Torch
-    if (caps && caps.torch) {
-      torchSupported = true;
-      document.getElementById('flashBtn').style.display = 'flex';
+    if (caps && caps.zoom && caps.zoom.max > 1) {
+      document.getElementById('zoomRow').style.display = 'flex';
+      var slider = document.getElementById('zoomSlider');
+      slider.min = caps.zoom.min || 1;
+      slider.max = Math.min(caps.zoom.max, 10);
+      slider.value = caps.zoom.min || 1;
     } else {
-      torchSupported = false;
-      document.getElementById('flashBtn').style.display = 'none';
-    }
-
-    // Zoom
-    if (caps && caps.zoom) {
-      zoomSupported = true;
-      zoomMin = caps.zoom.min || 1;
-      zoomMax = caps.zoom.max || 1;
-      if (zoomMax > 1) {
-        document.getElementById('zoomRow').style.display = 'flex';
-        var slider = document.getElementById('zoomSlider');
-        slider.min = zoomMin;
-        slider.max = Math.min(zoomMax, 8);
-        slider.value = zoomMin;
-        document.getElementById('zoomLabel').textContent = '1x';
-      }
-    } else {
-      zoomSupported = false;
       document.getElementById('zoomRow').style.display = 'none';
     }
-  } catch (e) {
-    torchSupported = false;
-    zoomSupported = false;
-    document.getElementById('flashBtn').style.display = 'none';
+  } catch(e) {
     document.getElementById('zoomRow').style.display = 'none';
   }
 }
 
-function closeCamera() {
-  stopCamera();
-  showScreen('homeScreen');
-}
+function closeCamera() { stopCamera(); showScreen('homeScreen'); }
+function goBackToCamera() { showScreen('camScreen'); }
 
 function stopCamera() {
-  if (torchActive) {
-    toggleFlash();
-  }
+  if (torchActive) toggleFlash();
   if (cameraStream) {
     var tracks = cameraStream.getTracks();
-    for (var i = 0; i < tracks.length; i++) {
-      tracks[i].stop();
-    }
-    cameraStream = null;
-    videoTrack = null;
+    for (var i = 0; i < tracks.length; i++) tracks[i].stop();
+    cameraStream = null; videoTrack = null;
   }
   document.getElementById('videoEl').srcObject = null;
 }
 
-function goBackToCamera() {
-  showScreen('camScreen');
-}
-
-/* --- FLASH --- */
+/* --- FLASH : toujours visible, try/catch à l'activation --- */
 function toggleFlash() {
-  if (!videoTrack || !torchSupported) return;
+  if (!videoTrack) return;
   torchActive = !torchActive;
   try {
     videoTrack.applyConstraints({ advanced: [{ torch: torchActive }] });
-  } catch (e) {
+  } catch(e) {
     torchActive = false;
+    showToast("Flash non disponible", true);
   }
-  updateFlashButton();
-}
-
-function updateFlashButton() {
-  var btn = document.getElementById('flashBtn');
-  if (torchActive) {
-    btn.className = 'cam-icon cam-icon-on';
-  } else {
-    btn.className = 'cam-icon cam-icon-off';
-  }
+  document.getElementById('flashBtn').className = torchActive ? 'cam-icon cam-icon-on' : 'cam-icon cam-icon-off';
 }
 
 /* --- ZOOM --- */
 function applyZoom(val) {
-  if (!videoTrack || !zoomSupported) return;
-  var zoomVal = parseFloat(val);
-  try {
-    videoTrack.applyConstraints({ advanced: [{ zoom: zoomVal }] });
-  } catch (e) {}
-  document.getElementById('zoomLabel').textContent = zoomVal.toFixed(1) + 'x';
+  if (!videoTrack) return;
+  try { videoTrack.applyConstraints({ advanced: [{ zoom: parseFloat(val) }] }); } catch(e) {}
+  document.getElementById('zoomLabel').textContent = parseFloat(val).toFixed(1) + 'x';
 }
 
 /* --- PHOTO --- */
@@ -418,7 +310,7 @@ function takePhoto() {
   flash.style.opacity = '0.5';
   setTimeout(function() { flash.style.opacity = '0'; }, 120);
 
-  // Capture frame
+  // Capture full frame
   var canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -428,36 +320,85 @@ function takePhoto() {
   capturedImage = new Image();
   capturedImage.onload = function() {
     showScreen('cropScreen');
-    initCropView();
+    initCropWithGuidePosition();
   };
   capturedImage.src = dataURL;
 }
 
 /* =============================================
-   CROP
+   CROP — coins positionnés depuis le guide caméra
    ============================================= */
-function initCropView() {
+function initCropWithGuidePosition() {
   requestAnimationFrame(function() {
     var area = document.getElementById('cropArea');
     var cv = document.getElementById('cropCanvas');
     cv.width = area.clientWidth;
     cv.height = area.clientHeight;
 
-    var iw = capturedImage.naturalWidth;
-    var ih = capturedImage.naturalHeight;
-    var scale = Math.min(cv.width / iw, cv.height / ih);
-    cropDisplayW = Math.round(iw * scale);
-    cropDisplayH = Math.round(ih * scale);
+    var imgW = capturedImage.naturalWidth;
+    var imgH = capturedImage.naturalHeight;
+    var scale = Math.min(cv.width / imgW, cv.height / imgH);
+    cropDisplayW = Math.round(imgW * scale);
+    cropDisplayH = Math.round(imgH * scale);
     cropOffsetX = Math.round((cv.width - cropDisplayW) / 2);
     cropOffsetY = Math.round((cv.height - cropDisplayH) / 2);
 
-    // Default corners at 5% margin
-    var margin = 0.05;
+    // === MAP GUIDE RECTANGLE → VIDEO COORDS ===
+    // Le guide fait 86% de la largeur de l'écran, ratio A4, centré
+    var video = document.getElementById('videoEl');
+    var screenW = video.clientWidth;
+    var screenH = video.clientHeight;
+    var vidW = imgW;  // = video.videoWidth
+    var vidH = imgH;  // = video.videoHeight
+
+    // object-fit:cover — calculer la zone visible
+    var videoRatio = vidW / vidH;
+    var screenRatio = screenW / screenH;
+    var visibleX, visibleY, visibleW, visibleH;
+
+    if (videoRatio > screenRatio) {
+      // Vidéo plus large que l'écran → coupée horizontalement
+      visibleH = vidH;
+      visibleW = vidH * screenRatio;
+      visibleX = (vidW - visibleW) / 2;
+      visibleY = 0;
+    } else {
+      // Vidéo plus haute que l'écran → coupée verticalement
+      visibleW = vidW;
+      visibleH = vidW / screenRatio;
+      visibleX = 0;
+      visibleY = (vidH - visibleH) / 2;
+    }
+
+    // Guide sur l'écran : 86% largeur, ratio A4, centré
+    var guideScreenW = screenW * 0.86;
+    var guideScreenH = guideScreenW * (297 / 210);
+    // Si le guide dépasse l'écran en hauteur, le réduire
+    if (guideScreenH > screenH * 0.75) {
+      guideScreenH = screenH * 0.75;
+      guideScreenW = guideScreenH * (210 / 297);
+    }
+    var guideScreenX = (screenW - guideScreenW) / 2;
+    var guideScreenY = (screenH - guideScreenH) / 2;
+
+    // Convertir écran → coordonnées vidéo
+    var scaleToVid = visibleW / screenW;
+    var guideVidX = visibleX + guideScreenX * scaleToVid;
+    var guideVidY = visibleY + guideScreenY * scaleToVid;
+    var guideVidW = guideScreenW * scaleToVid;
+    var guideVidH = guideScreenH * scaleToVid;
+
+    // Clamp aux bornes de l'image
+    var x1 = Math.max(0, Math.round(guideVidX));
+    var y1 = Math.max(0, Math.round(guideVidY));
+    var x2 = Math.min(vidW, Math.round(guideVidX + guideVidW));
+    var y2 = Math.min(vidH, Math.round(guideVidY + guideVidH));
+
     cropCorners = [
-      { x: Math.round(iw * margin), y: Math.round(ih * margin) },
-      { x: Math.round(iw * (1 - margin)), y: Math.round(ih * margin) },
-      { x: Math.round(iw * (1 - margin)), y: Math.round(ih * (1 - margin)) },
-      { x: Math.round(iw * margin), y: Math.round(ih * (1 - margin)) }
+      { x: x1, y: y1 },  // top-left
+      { x: x2, y: y1 },  // top-right
+      { x: x2, y: y2 },  // bottom-right
+      { x: x1, y: y2 }   // bottom-left
     ];
 
     drawCropOverlay();
@@ -478,9 +419,7 @@ function resetCorners() {
   drawCropOverlay();
 }
 
-function cancelCrop() {
-  showScreen('camScreen');
-}
+function cancelCrop() { showScreen('camScreen'); }
 
 function drawCropOverlay() {
   var cv = document.getElementById('cropCanvas');
@@ -491,8 +430,6 @@ function drawCropOverlay() {
   var sy = cropDisplayH / ih;
 
   ctx.clearRect(0, 0, cv.width, cv.height);
-
-  // Draw image
   ctx.drawImage(capturedImage, cropOffsetX, cropOffsetY, cropDisplayW, cropDisplayH);
 
   // Dark overlay
@@ -505,8 +442,7 @@ function drawCropOverlay() {
   for (var i = 0; i < 4; i++) {
     var px = cropOffsetX + cropCorners[i].x * sx;
     var py = cropOffsetY + cropCorners[i].y * sy;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
   ctx.closePath();
   ctx.clip();
@@ -520,29 +456,20 @@ function drawCropOverlay() {
   for (var i = 0; i < 4; i++) {
     var px = cropOffsetX + cropCorners[i].x * sx;
     var py = cropOffsetY + cropCorners[i].y * sy;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
   ctx.closePath();
   ctx.stroke();
 
-  // Corner handles
+  // Handles
   for (var i = 0; i < 4; i++) {
     var px = cropOffsetX + cropCorners[i].x * sx;
     var py = cropOffsetY + cropCorners[i].y * sy;
-
-    ctx.beginPath();
-    ctx.arc(px, py, HANDLE_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = '#3b82f6';
-    ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(px, py, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, HANDLE_R, 0, Math.PI * 2);
+    ctx.fillStyle = '#3b82f6'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff'; ctx.fill();
   }
 }
 
@@ -560,32 +487,23 @@ function setupCropTouch(cv) {
       y: (touch.clientY - rect.top) * (cv.height / rect.height)
     };
   }
-
   function findCorner(p) {
     for (var i = 0; i < 4; i++) {
       var cx = cropOffsetX + cropCorners[i].x * sx;
       var cy = cropOffsetY + cropCorners[i].y * sy;
-      var dist = Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2));
-      if (dist < HANDLE_RADIUS * 2.5) return i;
+      if (Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2)) < HANDLE_R * 2.5) return i;
     }
     return -1;
   }
-
-  cv.ontouchstart = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
-  cv.onmousedown = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
-
-  cv.ontouchmove = function(e) {
-    if (draggingCorner < 0) return;
-    e.preventDefault();
+  cv.ontouchstart = cv.onmousedown = function(e) { e.preventDefault(); draggingCorner = findCorner(getPos(e)); };
+  cv.ontouchmove = cv.onmousemove = function(e) {
+    if (draggingCorner < 0) return; e.preventDefault();
     var p = getPos(e);
     cropCorners[draggingCorner].x = Math.max(0, Math.min(iw, Math.round((p.x - cropOffsetX) / sx)));
     cropCorners[draggingCorner].y = Math.max(0, Math.min(ih, Math.round((p.y - cropOffsetY) / sy)));
     drawCropOverlay();
   };
-  cv.onmousemove = cv.ontouchmove;
-
-  cv.ontouchend = function() { draggingCorner = -1; };
-  cv.onmouseup = function() { draggingCorner = -1; };
+  cv.ontouchend = cv.onmouseup = function() { draggingCorner = -1; };
 }
 
 /* =============================================
@@ -598,191 +516,169 @@ function processCrop() {
   setTimeout(function() {
     try {
       var tl = cropCorners[0], tr = cropCorners[1], br = cropCorners[2], bl = cropCorners[3];
-
-      // Output dimensions
-      var wTop = Math.sqrt(Math.pow(tr.x - tl.x, 2) + Math.pow(tr.y - tl.y, 2));
-      var wBot = Math.sqrt(Math.pow(br.x - bl.x, 2) + Math.pow(br.y - bl.y, 2));
-      var hLeft = Math.sqrt(Math.pow(bl.x - tl.x, 2) + Math.pow(bl.y - tl.y, 2));
-      var hRight = Math.sqrt(Math.pow(br.x - tr.x, 2) + Math.pow(br.y - tr.y, 2));
+      var wTop = Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2));
+      var wBot = Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2));
+      var hLft = Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2));
+      var hRgt = Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2));
       var outW = Math.round(Math.max(wTop, wBot));
-      var outH = Math.round(Math.max(hLeft, hRight));
+      var outH = Math.round(Math.max(hLft, hRgt));
       var MAX = 2200;
       if (outW > MAX) { outH = Math.round(outH * MAX / outW); outW = MAX; }
       if (outH > MAX) { outW = Math.round(outW * MAX / outH); outH = MAX; }
 
-      // Get source pixels
-      var srcCanvas = document.createElement('canvas');
-      srcCanvas.width = capturedImage.naturalWidth;
-      srcCanvas.height = capturedImage.naturalHeight;
-      var srcCtx = srcCanvas.getContext('2d');
-      srcCtx.drawImage(capturedImage, 0, 0);
-      var srcData = srcCtx.getImageData(0, 0, srcCanvas.width, srcCanvas.height).data;
-      var srcW = srcCanvas.width;
-      var srcH = srcCanvas.height;
+      // Source pixels
+      var srcCv = document.createElement('canvas');
+      srcCv.width = capturedImage.naturalWidth;
+      srcCv.height = capturedImage.naturalHeight;
+      srcCv.getContext('2d').drawImage(capturedImage, 0, 0);
+      var srcPx = srcCv.getContext('2d').getImageData(0, 0, srcCv.width, srcCv.height).data;
+      var sW = srcCv.width;
+      var sH = srcCv.height;
 
-      // Warp
-      var outCanvas = document.createElement('canvas');
-      outCanvas.width = outW;
-      outCanvas.height = outH;
-      var outCtx = outCanvas.getContext('2d');
-      var outImgData = outCtx.createImageData(outW, outH);
-      var outPx = outImgData.data;
+      // Bilinear warp
+      var outCv = document.createElement('canvas');
+      outCv.width = outW; outCv.height = outH;
+      var outCtx = outCv.getContext('2d');
+      var outData = outCtx.createImageData(outW, outH);
+      var outPx = outData.data;
 
       for (var oy = 0; oy < outH; oy++) {
         var v = oy / Math.max(1, outH - 1);
         for (var ox = 0; ox < outW; ox++) {
           var u = ox / Math.max(1, outW - 1);
-          var sX = (1 - u) * (1 - v) * tl.x + u * (1 - v) * tr.x + u * v * br.x + (1 - u) * v * bl.x;
-          var sY = (1 - u) * (1 - v) * tl.y + u * (1 - v) * tr.y + u * v * br.y + (1 - u) * v * bl.y;
-
-          var fx = Math.max(0, Math.min(Math.floor(sX), srcW - 1));
-          var fy = Math.max(0, Math.min(Math.floor(sY), srcH - 1));
-          var cx = Math.min(fx + 1, srcW - 1);
-          var cy = Math.min(fy + 1, srcH - 1);
+          var sX = (1-u)*(1-v)*tl.x + u*(1-v)*tr.x + u*v*br.x + (1-u)*v*bl.x;
+          var sY = (1-u)*(1-v)*tl.y + u*(1-v)*tr.y + u*v*br.y + (1-u)*v*bl.y;
+          var fx = Math.max(0, Math.min(Math.floor(sX), sW-1));
+          var fy = Math.max(0, Math.min(Math.floor(sY), sH-1));
+          var cx = Math.min(fx+1, sW-1);
+          var cy = Math.min(fy+1, sH-1);
           var dx = sX - fx;
           var dy = sY - fy;
           var oi = (oy * outW + ox) * 4;
-
           for (var ch = 0; ch < 3; ch++) {
-            outPx[oi + ch] = Math.round(
-              srcData[(fy * srcW + fx) * 4 + ch] * (1 - dx) * (1 - dy) +
-              srcData[(fy * srcW + cx) * 4 + ch] * dx * (1 - dy) +
-              srcData[(cy * srcW + fx) * 4 + ch] * (1 - dx) * dy +
-              srcData[(cy * srcW + cx) * 4 + ch] * dx * dy
+            outPx[oi+ch] = Math.round(
+              srcPx[(fy*sW+fx)*4+ch]*(1-dx)*(1-dy) +
+              srcPx[(fy*sW+cx)*4+ch]*dx*(1-dy) +
+              srcPx[(cy*sW+fx)*4+ch]*(1-dx)*dy +
+              srcPx[(cy*sW+cx)*4+ch]*dx*dy
             );
           }
-          outPx[oi + 3] = 255;
+          outPx[oi+3] = 255;
         }
       }
-      outCtx.putImageData(outImgData, 0, 0);
+      outCtx.putImageData(outData, 0, 0);
 
-      // === Grayscale from warped image ===
-      var grayArr = new Uint8Array(outW * outH);
+      // Grayscale
+      var gray = new Uint8Array(outW * outH);
       for (var i = 0, j = 0; i < outPx.length; i += 4, j++) {
-        grayArr[j] = Math.round(0.299 * outPx[i] + 0.587 * outPx[i + 1] + 0.114 * outPx[i + 2]);
+        gray[j] = Math.round(0.299 * outPx[i] + 0.587 * outPx[i+1] + 0.114 * outPx[i+2]);
       }
 
-      // === 1. SCAN VERSION (Bradley adaptive threshold) ===
-      var scanBinary = bradleyThreshold(grayArr, outW, outH);
-      var scanCanvas = document.createElement('canvas');
-      scanCanvas.width = outW;
-      scanCanvas.height = outH;
-      var scanCtx = scanCanvas.getContext('2d');
+      // === 1. SCAN (Bradley threshold + anti-alias) ===
+      var binArr = bradleyThreshold(gray, outW, outH);
+      var scanCv = document.createElement('canvas');
+      scanCv.width = outW; scanCv.height = outH;
+      var scanCtx = scanCv.getContext('2d');
       var scanData = scanCtx.createImageData(outW, outH);
       var scanPx = scanData.data;
-      for (var i = 0, j = 0; j < scanBinary.length; j++, i += 4) {
-        if (scanBinary[j] === 0) {
-          // Text: use original gray for anti-aliasing
-          var textVal = Math.min(grayArr[j] * 0.5, 60);
-          scanPx[i] = scanPx[i + 1] = scanPx[i + 2] = textVal;
+      for (var i = 0, j = 0; j < binArr.length; j++, i += 4) {
+        if (binArr[j] === 0) {
+          var tv = Math.min(gray[j] * 0.5, 60);
+          scanPx[i] = scanPx[i+1] = scanPx[i+2] = tv;
         } else {
-          scanPx[i] = scanPx[i + 1] = scanPx[i + 2] = 255;
+          scanPx[i] = scanPx[i+1] = scanPx[i+2] = 255;
         }
-        scanPx[i + 3] = 255;
+        scanPx[i+3] = 255;
       }
       scanCtx.putImageData(scanData, 0, 0);
-      resultScanURL = scanCanvas.toDataURL('image/jpeg', 0.88);
+      resultScanURL = scanCv.toDataURL('image/jpeg', 0.88);
 
-      // === 2. COLOR VERSION (gentle clean, for Gemini) ===
-      var colCanvas = document.createElement('canvas');
-      colCanvas.width = outW;
-      colCanvas.height = outH;
-      var colCtx = colCanvas.getContext('2d');
-      colCtx.drawImage(outCanvas, 0, 0);
+      // === 2. COLOR (gentle clean for Gemini) ===
+      var colCv = document.createElement('canvas');
+      colCv.width = outW; colCv.height = outH;
+      var colCtx = colCv.getContext('2d');
+      colCtx.drawImage(outCv, 0, 0);
       var colData = colCtx.getImageData(0, 0, outW, outH);
       var colPx = colData.data;
       // White balance
-      var lumHist = new Uint32Array(256);
-      for (var j = 0; j < grayArr.length; j++) lumHist[grayArr[j]]++;
-      var target92 = Math.round(grayArr.length * 0.92);
-      var cumSum = 0;
-      var whitePoint = 240;
-      for (var v = 0; v < 256; v++) {
-        cumSum += lumHist[v];
-        if (cumSum >= target92) { whitePoint = Math.max(v, 120); break; }
-      }
-      var scaleFactor = Math.min(248 / whitePoint, 1.25);
+      var hist = new Uint32Array(256);
+      for (var j = 0; j < gray.length; j++) hist[gray[j]]++;
+      var tgt = Math.round(gray.length * 0.92);
+      var cum = 0;
+      var wp = 240;
+      for (var v2 = 0; v2 < 256; v2++) { cum += hist[v2]; if (cum >= tgt) { wp = Math.max(v2, 120); break; } }
+      var scl = Math.min(248 / wp, 1.25);
       for (var i = 0; i < colPx.length; i += 4) {
         for (var ch = 0; ch < 3; ch++) {
-          var val = colPx[i + ch] * scaleFactor;
+          var val = colPx[i+ch] * scl;
           var norm = val / 255;
-          if (norm < 0.5) { norm = 2 * norm * norm; }
-          else { norm = 1 - 2 * (1 - norm) * (1 - norm); }
-          colPx[i + ch] = Math.max(0, Math.min(255, Math.round(norm * 255)));
+          norm = norm < 0.5 ? 2*norm*norm : 1 - 2*(1-norm)*(1-norm);
+          colPx[i+ch] = Math.max(0, Math.min(255, Math.round(norm * 255)));
         }
       }
       colCtx.putImageData(colData, 0, 0);
-      resultColorURL = colCanvas.toDataURL('image/jpeg', 0.88);
+      resultColorURL = colCv.toDataURL('image/jpeg', 0.88);
       resultColorB64 = resultColorURL.split(',')[1];
 
-      // === 3. GRAY VERSION ===
-      var grayCanvas = document.createElement('canvas');
-      grayCanvas.width = outW;
-      grayCanvas.height = outH;
-      var grayCtx = grayCanvas.getContext('2d');
+      // === 3. GRAY ===
+      var grayCv = document.createElement('canvas');
+      grayCv.width = outW; grayCv.height = outH;
+      var grayCtx = grayCv.getContext('2d');
       var grayData = grayCtx.createImageData(outW, outH);
       var grayPx = grayData.data;
-      for (var i = 0, j = 0; j < grayArr.length; j++, i += 4) {
-        var gVal = Math.max(0, Math.min(255, 1.4 * (grayArr[j] - 60) + 30));
-        grayPx[i] = grayPx[i + 1] = grayPx[i + 2] = gVal;
-        grayPx[i + 3] = 255;
+      for (var i = 0, j = 0; j < gray.length; j++, i += 4) {
+        var gv = Math.max(0, Math.min(255, 1.4 * (gray[j] - 60) + 30));
+        grayPx[i] = grayPx[i+1] = grayPx[i+2] = gv;
+        grayPx[i+3] = 255;
       }
       grayCtx.putImageData(grayData, 0, 0);
-      resultGrayURL = grayCanvas.toDataURL('image/jpeg', 0.88);
+      resultGrayURL = grayCv.toDataURL('image/jpeg', 0.88);
 
-      // Show preview in scan mode
+      // Show preview
       currentMode = 'scan';
       updateModeButtons();
       document.getElementById('previewImg').src = resultScanURL;
-
       hideLoading();
       showScreen('prevScreen');
 
-    } catch (err) {
+    } catch(err) {
       hideLoading();
       showToast("Erreur: " + err.message, true);
     }
   }, 50);
 }
 
-/* === BRADLEY ADAPTIVE THRESHOLD === */
 function bradleyThreshold(gray, w, h) {
-  // Build integral image
   var integral = new Float64Array(w * h);
   for (var y = 0; y < h; y++) {
     var rowSum = 0;
     for (var x = 0; x < w; x++) {
       rowSum += gray[y * w + x];
-      integral[y * w + x] = rowSum + (y > 0 ? integral[(y - 1) * w + x] : 0);
+      integral[y * w + x] = rowSum + (y > 0 ? integral[(y-1) * w + x] : 0);
     }
   }
-
   var output = new Uint8Array(w * h);
   var radius = Math.max(8, Math.round(Math.min(w, h) / 8));
-  var threshold = 0.85;
-
+  var tFactor = 0.85;
   for (var y = 0; y < h; y++) {
     for (var x = 0; x < w; x++) {
       var x1 = Math.max(0, x - radius);
       var y1 = Math.max(0, y - radius);
       var x2 = Math.min(w - 1, x + radius);
       var y2 = Math.min(h - 1, y + radius);
-      var count = (x2 - x1 + 1) * (y2 - y1 + 1);
-
-      var sum = integral[y2 * w + x2];
-      if (x1 > 0) sum -= integral[y2 * w + (x1 - 1)];
-      if (y1 > 0) sum -= integral[(y1 - 1) * w + x2];
-      if (x1 > 0 && y1 > 0) sum += integral[(y1 - 1) * w + (x1 - 1)];
-
-      var mean = sum / count;
-      output[y * w + x] = (gray[y * w + x] < mean * threshold) ? 0 : 255;
+      var count = (x2-x1+1) * (y2-y1+1);
+      var sum = integral[y2*w+x2];
+      if (x1 > 0) sum -= integral[y2*w+(x1-1)];
+      if (y1 > 0) sum -= integral[(y1-1)*w+x2];
+      if (x1 > 0 && y1 > 0) sum += integral[(y1-1)*w+(x1-1)];
+      output[y*w+x] = (gray[y*w+x] < (sum/count) * tFactor) ? 0 : 255;
     }
   }
   return output;
 }
 
 /* =============================================
-   PREVIEW MODE SWITCHING
+   PREVIEW
    ============================================= */
 function switchMode(mode) {
   currentMode = mode;
@@ -792,28 +688,16 @@ function switchMode(mode) {
   else if (mode === 'color') img.src = resultColorURL;
   else img.src = resultGrayURL;
 }
-
 function updateModeButtons() {
-  var scanBtn = document.getElementById('modeScan');
-  var colorBtn = document.getElementById('modeColor');
-  var grayBtn = document.getElementById('modeGray');
-  scanBtn.className = 'prev-mode-btn' + (currentMode === 'scan' ? ' active' : '');
-  colorBtn.className = 'prev-mode-btn' + (currentMode === 'color' ? ' active' : '');
-  grayBtn.className = 'prev-mode-btn' + (currentMode === 'gray' ? ' active' : '');
+  document.getElementById('modeScan').className = 'prev-mode-btn' + (currentMode === 'scan' ? ' active' : '');
+  document.getElementById('modeColor').className = 'prev-mode-btn' + (currentMode === 'color' ? ' active' : '');
+  document.getElementById('modeGray').className = 'prev-mode-btn' + (currentMode === 'gray' ? ' active' : '');
 }
 
-/* =============================================
-   ADD PAGE
-   ============================================= */
 function addPage() {
   if (!resultColorB64) return;
   var sizeKB = Math.round(resultColorB64.length * 0.75 / 1024);
-  pages.push({
-    scanURL: resultScanURL,
-    colorB64: resultColorB64,
-    mime: 'image/jpeg',
-    size: sizeKB
-  });
+  pages.push({ scanURL: resultScanURL, colorB64: resultColorB64, mime: 'image/jpeg', size: sizeKB });
   stopCamera();
   showScreen('homeScreen');
   renderGallery();
@@ -826,22 +710,16 @@ function addPage() {
 function renderGallery() {
   var grid = document.getElementById('gallery');
   var empty = document.getElementById('emptyState');
-
   if (pages.length === 0) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
-    document.getElementById('sendButton').disabled = true;
-    updateStats();
-    return;
+    grid.innerHTML = ''; empty.style.display = 'block';
+    document.getElementById('sendButton').disabled = true; updateStats(); return;
   }
-
   empty.style.display = 'none';
   document.getElementById('sendButton').disabled = false;
-
   var html = '';
   for (var i = 0; i < pages.length; i++) {
     html += '<div class="home-card">';
-    html += '<span class="badge">P' + (i + 1) + ' · ' + pages[i].size + 'KB</span>';
+    html += '<span class="badge">P' + (i+1) + ' · ' + pages[i].size + 'KB</span>';
     html += '<button class="remove" onclick="event.stopPropagation();removePage(' + i + ')">✕</button>';
     html += '<img src="' + pages[i].scanURL + '">';
     html += '</div>';
@@ -849,92 +727,49 @@ function renderGallery() {
   grid.innerHTML = html;
   updateStats();
 }
-
-function removePage(index) {
-  pages.splice(index, 1);
-  renderGallery();
-}
-
+function removePage(i) { pages.splice(i, 1); renderGallery(); }
 function updateStats() {
   document.getElementById('pageCount').textContent = pages.length;
-  var totalKB = 0;
-  for (var i = 0; i < pages.length; i++) totalKB += pages[i].size;
-  if (totalKB > 1024) {
-    document.getElementById('totalSize').textContent = (totalKB / 1024).toFixed(1) + ' MB';
-  } else {
-    document.getElementById('totalSize').textContent = totalKB + ' KB';
-  }
+  var t = 0; for (var i = 0; i < pages.length; i++) t += pages[i].size;
+  document.getElementById('totalSize').textContent = t > 1024 ? (t/1024).toFixed(1)+' MB' : t+' KB';
 }
 
 /* =============================================
-   SEND TO GOOGLE APPS SCRIPT
+   SEND
    ============================================= */
 function sendPages() {
-  if (pages.length === 0) return;
+  if (!pages.length) return;
   if (!GAS_URL) { showScreen('configScreen'); return; }
-
   showLoading("Envoi de " + pages.length + " page(s)...");
-
   var uploadPages = [];
   for (var i = 0; i < pages.length; i++) {
     uploadPages.push({ base64: pages[i].colorB64, mime: pages[i].mime });
   }
-
   var payload = JSON.stringify({ action: "upload", pages: uploadPages });
 
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: payload,
-    headers: { 'Content-Type': 'text/plain' },
-    redirect: 'follow'
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
+  fetch(GAS_URL, { method: 'POST', body: payload, headers: { 'Content-Type': 'text/plain' }, redirect: 'follow' })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
     hideLoading();
-    if (data.success) {
-      pages = [];
-      renderGallery();
-      showToast(data.message, false);
-    } else {
-      showToast(data.error || "Erreur", true);
-    }
+    if (d.success) { pages = []; renderGallery(); showToast(d.message, false); }
+    else showToast(d.error || "Erreur", true);
   })
   .catch(function() {
-    // GAS redirects — try no-cors fallback
-    fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: payload
-    })
-    .then(function() {
-      hideLoading();
-      pages = [];
-      renderGallery();
-      showToast("✅ Envoyé !", false);
-    })
-    .catch(function() {
-      hideLoading();
-      showToast("Erreur réseau", true);
-    });
+    fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: payload })
+    .then(function() { hideLoading(); pages = []; renderGallery(); showToast("✅ Envoyé !", false); })
+    .catch(function() { hideLoading(); showToast("Erreur réseau", true); });
   });
 }
 
 /* =============================================
-   UI HELPERS
+   HELPERS
    ============================================= */
-function showLoading(text) {
-  document.getElementById('loadingText').textContent = text;
-  document.getElementById('loadingOverlay').classList.add('active');
-}
-
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('active');
-}
-
-function showToast(message, isError) {
+function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('active'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
+function showToast(m, err) {
   var el = document.getElementById('toastEl');
-  el.textContent = message;
-  el.className = 'toast ' + (isError ? 'toast-err' : 'toast-ok');
+  el.textContent = m;
+  el.className = 'toast ' + (err ? 'toast-err' : 'toast-ok');
   setTimeout(function() { el.classList.add('visible'); }, 10);
   setTimeout(function() { el.classList.remove('visible'); }, 3000);
 }
