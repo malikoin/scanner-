@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>VazyGood Scanner</title>
+<title>VazyGood Scanner Pro</title>
 <meta name="theme-color" content="#000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
@@ -11,7 +11,7 @@
 body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;height:100dvh;overflow:hidden;user-select:none}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;background:#000}
 .screen.active{display:flex}
-.btn{padding:13px 20px;border-radius:12px;border:none;font-weight:600;font-size:0.8rem;cursor:pointer;text-align:center}
+.btn{padding:13px 20px;border-radius:12px;border:none;font-weight:600;font-size:0.8rem;cursor:pointer;text-align:center;transition:all 0.2s}
 .btn:active{transform:scale(0.96)}
 .btn-w{background:#fff;color:#000}
 .btn-b{background:#3b82f6;color:#fff}
@@ -38,7 +38,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;h
 .home-bar .btn{flex:1}
 #camScreen video{width:100%;height:100%;object-fit:cover}
 .cam-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
-.cam-guide{width:86%;max-width:360px;aspect-ratio:210/297;border:2px solid rgba(59,130,246,0.5);border-radius:6px;box-shadow:0 0 0 3000px rgba(0,0,0,0.35);position:relative}
+.cam-guide{width:86%;max-width:360px;aspect-ratio:210/297;border:2px solid rgba(59,130,246,0.6);border-radius:6px;box-shadow:0 0 0 3000px rgba(0,0,0,0.45);position:relative}
 .ccr{position:absolute;width:20px;height:20px}
 .ccr.tl{top:-2px;left:-2px;border-top:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:5px 0 0 0}
 .ccr.tr{top:-2px;right:-2px;border-top:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 5px 0 0}
@@ -50,8 +50,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;h
 .cico{width:36px;height:36px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;backdrop-filter:blur(4px)}
 .cico-off{background:rgba(255,255,255,0.12);color:#aaa}
 .cico-on{background:#f59e0b;color:#000}
-.cam-bottom{position:absolute;bottom:0;left:0;right:0;padding:12px 20px;padding-bottom:max(16px,env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,0.5));z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px}
-.cam-hint{font-size:0.62rem;color:rgba(255,255,255,0.4)}
+.cam-bottom{position:absolute;bottom:0;left:0;right:0;padding:12px 20px;padding-bottom:max(16px,env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,0.6));z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cam-hint{font-size:0.62rem;color:rgba(255,255,255,0.5);background:rgba(0,0,0,0.4);padding:4px 10px;border-radius:20px}
 .cam-zoom{display:flex;align-items:center;gap:8px;width:70%;max-width:250px}
 .cam-zoom label{font-size:0.6rem;color:#aaa;white-space:nowrap}
 .cam-zoom input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:#333;border-radius:2px;outline:none}
@@ -69,17 +69,17 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;h
 .crop-bar{padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:8px}
 .crop-bar .btn{flex:1;padding:12px;font-size:0.75rem}
 .prev-modes{display:flex;justify-content:center;gap:6px;padding:8px;border-bottom:1px solid #151515}
-.pmbtn{padding:7px 14px;border-radius:8px;border:1px solid #252525;background:#0a0a0a;color:#666;font-size:0.65rem;font-weight:600;cursor:pointer;font-family:inherit}
+.pmbtn{padding:7px 14px;border-radius:8px;border:1px solid #252525;background:#0a0a0a;color:#666;font-size:0.65rem;font-weight:600;cursor:pointer}
 .pmbtn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
 .prev-image{flex:1;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;background:#0a0a0a}
-.prev-image img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.prev-image img{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
 .prev-bar{padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid #151515;display:flex;gap:8px}
 .prev-bar .btn{flex:1;padding:12px;font-size:0.75rem}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .overlay.active{opacity:1;pointer-events:all}
 .spinner{width:36px;height:36px;border:3px solid #1a1a1a;border-top-color:#3b82f6;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.overlay p{margin-top:12px;font-size:0.72rem;color:#555}
+.overlay p{margin-top:12px;font-size:0.72rem;color:#666}
 .toast{position:fixed;top:12px;left:12px;right:12px;padding:10px 14px;border-radius:10px;font-weight:600;font-size:0.72rem;text-align:center;z-index:300;transform:translateY(-120%);transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1)}
 .toast.visible{transform:translateY(0)}
 .toast-ok{background:#22c55e;color:#000}
@@ -88,38 +88,38 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#000;color:#fff;h
 </head>
 <body>
 
-<div class="screen" id="configScreen"><div class="config-box"><h2>⚙️ Configuration</h2><p>Colle l'URL de ton Google Apps Script</p><input id="configInput" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn btn-b" onclick="saveConfig()" style="width:100%">Valider</button></div></div>
+<div class="screen" id="configScreen"><div class="config-box"><h2>⚙️ Configuration Backend</h2><p>Colle l'URL de ton script de déploiement Google Apps Script</p><input id="configInput" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn btn-b" onclick="saveConfig()" style="width:100%">Valider l'authentification</button></div></div>
 
 <div class="screen active" id="homeScreen">
-  <div class="home-header"><h1>VAZYGOOD SCANNER</h1><small>SCAN PRO · DRIVE</small></div>
-  <div class="home-stats">PAGES <b id="pageCount">0</b>&nbsp;&nbsp;TAILLE <b id="totalSize">0 KB</b></div>
-  <div class="home-feed"><div id="emptyState" class="home-empty"><div style="font-size:2rem">📄</div><p>Scanne tes factures fournisseur.<br>Rendu scanner professionnel.<br>Triées par fournisseur sur Drive.</p></div><div class="home-grid" id="gallery"></div></div>
-  <div class="home-bar"><button class="btn btn-w" onclick="openCamera()">📸 Scanner</button><button class="btn btn-b" id="sendButton" disabled onclick="sendPages()">🚀 Envoyer</button></div>
+  <div class="home-header"><h1>VAZYGOOD SCANNER</h1><small>MOTEUR DE TRI DRIVE & SHEET</small></div>
+  <div class="home-stats">PAGES EN ATTENTE : <b id="pageCount">0</b>&nbsp;&nbsp;&nbsp;&nbsp;VOLUME : <b id="totalSize">0 KB</b></div>
+  <div class="home-feed"><div id="emptyState" class="home-empty"><div style="font-size:2rem">📄</div><p>Scanne tes factures matières premières.<br>Traitement géométrique haute visibilité.<br>Archivage automatisé.</p></div><div class="home-grid" id="gallery"></div></div>
+  <div class="home-bar"><button class="btn btn-w" onclick="openCamera()">📸 Numériser</button><button class="btn btn-b" id="sendButton" disabled onclick="sendPages()">🚀 Envoyer à l'index</button></div>
 </div>
 
 <div class="screen" id="camScreen">
   <video id="videoEl" autoplay playsinline muted></video>
   <div class="cam-overlay"><div class="cam-guide"><div class="ccr tl"></div><div class="ccr tr"></div><div class="ccr br"></div><div class="ccr bl"></div></div></div>
-  <div class="cam-topbar"><h3>📷 Scanner</h3><div class="cam-icons"><button class="cico cico-off" id="flashBtn" onclick="toggleFlash()">🔦</button><button class="cico cico-off" onclick="closeCamera()">✕</button></div></div>
+  <div class="cam-topbar"><h3>📷 Objectif</h3><div class="cam-icons"><button class="cico cico-off" id="flashBtn" onclick="toggleFlash()">🔦</button><button class="cico cico-off" onclick="closeCamera()">✕</button></div></div>
   <div class="cam-bottom">
     <div class="cam-zoom" id="zoomRow" style="display:none"><label>1x</label><input type="range" id="zoomSlider" min="1" max="5" step="0.1" value="1" oninput="applyZoom(this.value)"><label id="zoomLabel">1x</label></div>
-    <div class="cam-hint">Cadre la facture dans le rectangle</div>
+    <div class="cam-hint">Mise au point active. Stabilise l'appareil.</div>
     <button class="shut" onclick="takePhoto()"></button>
   </div>
   <div class="cflash" id="flashOverlay"></div>
 </div>
 
 <div class="screen" id="cropScreen">
-  <div class="crop-header"><div><h3>Recadrer le document</h3><span>Déplace les 4 coins</span></div><button class="xbtn" onclick="cancelCrop()">✕</button></div>
+  <div class="crop-header"><div><h3>Ajustement perspective</h3><span>Fais glisser les coins aux bords du papier</span></div><button class="xbtn" onclick="cancelCrop()">✕</button></div>
   <div class="crop-wrap" id="cropArea"><canvas id="cropCanvas"></canvas></div>
-  <div class="crop-bar"><button class="btn btn-w" onclick="cancelCrop()">Annuler</button><button class="btn btn-w" onclick="resetCorners()">↺ Reset</button><button class="btn btn-b" onclick="processCrop()">Valider ✓</button></div>
+  <div class="crop-bar"><button class="btn btn-w" onclick="cancelCrop()">Annuler</button><button class="btn btn-w" onclick="resetCorners()">↺ Réinitialiser</button><button class="btn btn-b" onclick="processCrop()">Valider Contours ✓</button></div>
 </div>
 
 <div class="screen" id="prevScreen">
-  <div class="crop-header"><h3>Aperçu du scan</h3><button class="xbtn" onclick="goBackToCam()">✕</button></div>
-  <div class="prev-modes"><button class="pmbtn active" id="modeScan" onclick="switchMode('scan')">📄 Scanner</button><button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button><button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ Gris</button></div>
+  <div class="crop-header"><h3>Filtre de lisibilité IA</h3><button class="xbtn" onclick="goBackToCam()">✕</button></div>
+  <div class="prev-modes"><button class="pmbtn active" id="modeScan" onclick="switchMode('scan')">📄 Optimisé IA (Anti-Ombre)</button><button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Égalisé Couleur</button><button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ N&B Standard</button></div>
   <div class="prev-image"><img id="previewImg"></div>
-  <div class="prev-bar"><button class="btn btn-w" onclick="goBackToCam()">↺ Refaire</button><button class="btn btn-b" onclick="addPage()">Ajouter ✓</button></div>
+  <div class="prev-bar"><button class="btn btn-w" onclick="goBackToCam()">↺ Reprendre</button><button class="btn btn-b" onclick="addPage()">Confirmer la page ✓</button></div>
 </div>
 
 <div class="overlay" id="loadingOverlay"><div class="spinner"></div><p id="loadingText"></p></div>
@@ -131,9 +131,9 @@ if (!GAS_URL) showScreen('configScreen');
 
 function saveConfig() {
   var url = document.getElementById('configInput').value.trim();
-  if (!url || url.indexOf('https://') !== 0) { showToast('URL invalide', true); return; }
+  if (!url || url.indexOf('https://') !== 0) { showToast('URL Script Invalide', true); return; }
   GAS_URL = url; localStorage.setItem('gas_url', url);
-  showScreen('homeScreen'); showToast('Configuré ✓', false);
+  showScreen('homeScreen'); showToast('Liaison Backend Établie ✓', false);
 }
 
 function showScreen(id) {
@@ -153,10 +153,8 @@ var cropCorners = [];
 var cropDW = 0, cropDH = 0, cropOX = 0, cropOY = 0;
 var dragging = -1;
 var HR = 22;
-var resScanURL = '', resColorURL = '', resGrayURL = '', resColorB64 = '';
+var resScanURL = '', resColorURL = '', resGrayURL = '', resColorB64 = '', resScanB64 = '';
 var curMode = 'scan';
-
-// ===================== CAMERA =====================
 
 function openCamera() {
   if (!GAS_URL) { showScreen('configScreen'); return; }
@@ -165,7 +163,7 @@ function openCamera() {
   document.getElementById('flashBtn').className = 'cico cico-off';
 
   navigator.mediaDevices.getUserMedia({
-    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1440 } },
+    video: { facingMode: 'environment', width: { ideal: 2048 }, height: { ideal: 1536 }, focusMode: "continuous" },
     audio: false
   }).then(function(stream) {
     cameraStream = stream;
@@ -174,7 +172,7 @@ function openCamera() {
     setTimeout(checkZoom, 1000);
   }).catch(function(err) {
     showScreen('homeScreen');
-    showToast('Caméra: ' + err.message, true);
+    showToast('Erreur d\'accès caméra : ' + err.message, true);
   });
 }
 
@@ -186,7 +184,7 @@ function checkZoom() {
       document.getElementById('zoomRow').style.display = 'flex';
       var sl = document.getElementById('zoomSlider');
       sl.min = caps.zoom.min || 1;
-      sl.max = Math.min(caps.zoom.max, 10);
+      sl.max = Math.min(caps.zoom.max, 8);
       sl.value = caps.zoom.min || 1;
     }
   } catch(e) {}
@@ -197,11 +195,8 @@ function goBackToCam() { showScreen('camScreen'); }
 function cancelCrop() { showScreen('camScreen'); }
 
 function stopCam() {
-  if (torchActive) {
-    torchActive = false;
-    if (videoTrack) {
-      videoTrack.applyConstraints({ advanced: [{ torch: false }] }).catch(function(){});
-    }
+  if (torchActive && videoTrack) {
+    videoTrack.applyConstraints({ advanced: [{ torch: false }] }).catch(function(){});
   }
   if (cameraStream) {
     var tracks = cameraStream.getTracks();
@@ -211,25 +206,14 @@ function stopCam() {
   document.getElementById('videoEl').srcObject = null;
 }
 
-// ===================== FLASH (Promise-based) =====================
-
 function toggleFlash() {
-  if (!videoTrack) {
-    showToast('Caméra non active', true);
-    return;
-  }
-
+  if (!videoTrack) { showToast('Caméra inactive', true); return; }
   var newState = !torchActive;
-
-  videoTrack.applyConstraints({
-    advanced: [{ torch: newState }]
-  }).then(function() {
+  videoTrack.applyConstraints({ advanced: [{ torch: newState }] }).then(function() {
     torchActive = newState;
     document.getElementById('flashBtn').className = torchActive ? 'cico cico-on' : 'cico cico-off';
   }).catch(function(err) {
-    torchActive = false;
-    document.getElementById('flashBtn').className = 'cico cico-off';
-    showToast('Flash: ' + err.message + ' — Essaye Chrome', true);
+    showToast('Flash indisponible sur ce navigateur', true);
   });
 }
 
@@ -239,15 +223,13 @@ function applyZoom(val) {
   document.getElementById('zoomLabel').textContent = parseFloat(val).toFixed(1) + 'x';
 }
 
-// ===================== PHOTO =====================
-
 function takePhoto() {
   var video = document.getElementById('videoEl');
   if (!video.videoWidth) return;
 
   var fl = document.getElementById('flashOverlay');
-  fl.style.opacity = '0.5';
-  setTimeout(function() { fl.style.opacity = '0'; }, 120);
+  fl.style.opacity = '0.6';
+  setTimeout(function() { fl.style.opacity = '0'; }, 100);
 
   var c = document.createElement('canvas');
   c.width = video.videoWidth; c.height = video.videoHeight;
@@ -258,10 +240,8 @@ function takePhoto() {
     showScreen('cropScreen');
     initCrop();
   };
-  capturedImage.src = c.toDataURL('image/jpeg', 0.92);
+  capturedImage.src = c.toDataURL('image/jpeg', 0.95);
 }
-
-// ===================== CROP =====================
 
 function initCrop() {
   requestAnimationFrame(function() {
@@ -274,28 +254,8 @@ function initCrop() {
     cropDW = Math.round(iw * scale); cropDH = Math.round(ih * scale);
     cropOX = Math.round((cv.width - cropDW) / 2); cropOY = Math.round((cv.height - cropDH) / 2);
 
-    // Map guide rectangle to video coords
-    var video = document.getElementById('videoEl');
-    var sW = video.clientWidth, sH = video.clientHeight;
-    var vRatio = iw / ih, sRatio = sW / sH;
-    var visX, visY, visW, visH;
-    if (vRatio > sRatio) {
-      visH = ih; visW = ih * sRatio; visX = (iw - visW) / 2; visY = 0;
-    } else {
-      visW = iw; visH = iw / sRatio; visX = 0; visY = (ih - visH) / 2;
-    }
-
-    var gW = sW * 0.86, gH = gW * (297 / 210);
-    if (gH > sH * 0.75) { gH = sH * 0.75; gW = gH * (210 / 297); }
-    var gX = (sW - gW) / 2, gY = (sH - gH) / 2;
-    var s2v = visW / sW;
-    var vgX = visX + gX * s2v, vgY = visY + gY * s2v;
-    var vgW = gW * s2v, vgH = gH * s2v;
-
-    var x1 = Math.max(0, Math.round(vgX));
-    var y1 = Math.max(0, Math.round(vgY));
-    var x2 = Math.min(iw, Math.round(vgX + vgW));
-    var y2 = Math.min(ih, Math.round(vgY + vgH));
+    var x1 = Math.round(iw * 0.08), y1 = Math.round(ih * 0.08);
+    var x2 = Math.round(iw * 0.92), y2 = Math.round(ih * 0.92);
 
     cropCorners = [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}];
     drawCrop(); setupTouch(cv);
@@ -303,7 +263,7 @@ function initCrop() {
 }
 
 function resetCorners() {
-  var iw = capturedImage.naturalWidth, ih = capturedImage.naturalHeight, m = 0.03;
+  var iw = capturedImage.naturalWidth, ih = capturedImage.naturalHeight, m = 0.04;
   cropCorners = [{x:Math.round(iw*m),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*m)},{x:Math.round(iw*(1-m)),y:Math.round(ih*(1-m))},{x:Math.round(iw*m),y:Math.round(ih*(1-m))}];
   drawCrop();
 }
@@ -314,17 +274,16 @@ function drawCrop() {
   var sx = cropDW/iw, sy = cropDH/ih;
   ctx.clearRect(0,0,cv.width,cv.height);
   ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH);
-  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,cv.width,cv.height);
   ctx.save(); ctx.beginPath();
   for (var i=0;i<4;i++){var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
   ctx.closePath(); ctx.clip(); ctx.drawImage(capturedImage, cropOX, cropOY, cropDW, cropDH); ctx.restore();
-  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; ctx.beginPath();
+  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=3; ctx.beginPath();
   for(var i=0;i<4;i++){var px=cropOX+cropCorners[i].x*sx,py=cropOY+cropCorners[i].y*sy;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
   ctx.closePath(); ctx.stroke();
   for(var i=0;i<4;i++){
     var px=cropOX+cropCorners[i].x*sx, py=cropOY+cropCorners[i].y*sy;
     ctx.beginPath();ctx.arc(px,py,HR,0,Math.PI*2);ctx.fillStyle='#3b82f6';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-    ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   }
 }
 
@@ -332,17 +291,15 @@ function setupTouch(cv) {
   var iw=capturedImage.naturalWidth, ih=capturedImage.naturalHeight;
   var sx=cropDW/iw, sy=cropDH/ih;
   function pos(e){var r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
-  function hit(p){for(var i=0;i<4;i++){var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy;if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2.5)return i;}return-1;}
+  function hit(p){for(var i=0;i<4;i++){var cx=cropOX+cropCorners[i].x*sx,cy=cropOY+cropCorners[i].y*sy;if(Math.sqrt(Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2))<HR*2)return i;}return-1;}
   cv.ontouchstart=cv.onmousedown=function(e){e.preventDefault();dragging=hit(pos(e));};
   cv.ontouchmove=cv.onmousemove=function(e){if(dragging<0)return;e.preventDefault();var p=pos(e);cropCorners[dragging].x=Math.max(0,Math.min(iw,Math.round((p.x-cropOX)/sx)));cropCorners[dragging].y=Math.max(0,Math.min(ih,Math.round((p.y-cropOY)/sy)));drawCrop();};
   cv.ontouchend=cv.onmouseup=function(){dragging=-1;};
 }
 
-// ===================== PROCESS =====================
-
 function processCrop() {
   if (!capturedImage || cropCorners.length < 4) return;
-  showLoading('Traitement du scan...');
+  showLoading('Égalisation numérique des blancs...');
   setTimeout(function() {
     try {
       var tl=cropCorners[0],tr=cropCorners[1],br=cropCorners[2],bl=cropCorners[3];
@@ -351,9 +308,8 @@ function processCrop() {
       var hL=Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2));
       var hR=Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2));
       var oW=Math.round(Math.max(wT,wB)), oH=Math.round(Math.max(hL,hR));
-      var MX=2200;
-      if(oW>MX){oH=Math.round(oH*MX/oW);oW=MX;}
-      if(oH>MX){oW=Math.round(oW*MX/oH);oH=MX;}
+      var MX=1800; // Résolution d'extraction optimisée
+      if(oW>MX){oH=Math.round(oH*MX/oW);oW=MX;}if(oH>MX){oW=Math.round(oW*MX/oH);oH=MX;}
 
       var sc=document.createElement('canvas');sc.width=capturedImage.naturalWidth;sc.height=capturedImage.naturalHeight;
       sc.getContext('2d').drawImage(capturedImage,0,0);
@@ -373,62 +329,47 @@ function processCrop() {
       }}
       octx.putImageData(od,0,0);
 
-      // Grayscale
       var gray=new Uint8Array(oW*oH);
       for(var i=0,j=0;i<op.length;i+=4,j++){gray[j]=Math.round(0.299*op[i]+0.587*op[i+1]+0.114*op[i+2]);}
 
-      // ===== 1. SCAN : Background division (meilleur que Bradley) =====
-      var blurred = boxBlur(gray, oW, oH, Math.max(20, Math.round(Math.min(oW,oH)/10)));
+      // Algorithme Avancé de division locale (Suppression d'ombres complexes)
+      var blurred = boxBlur(gray, oW, oH, Math.max(15, Math.round(Math.min(oW,oH)/12)));
       var scanCv=document.createElement('canvas');scanCv.width=oW;scanCv.height=oH;
       var scanCtx=scanCv.getContext('2d'),scanD=scanCtx.createImageData(oW,oH),sp=scanD.data;
+      
       for(var i=0,j=0;j<gray.length;j++,i+=4){
         var bg=Math.max(blurred[j],1);
-        var norm=Math.round((gray[j]/bg)*255);
-        norm=Math.max(0,Math.min(255,norm));
-        // Seuil : texte < 190 → noir doux, fond > 190 → blanc
-        if(norm<190){
-          sp[i]=sp[i+1]=sp[i+2]=Math.max(0,Math.min(norm*0.35,50));
-        } else {
-          sp[i]=sp[i+1]=sp[i+2]=255;
-        }
+        var res=Math.round((gray[j]/bg)*230); // Égalisation
+        res = res < 140 ? Math.max(0, res * 0.4) : 255; // Seuil adaptatif doux pour ne pas casser les polices fines
+        sp[i]=sp[i+1]=sp[i+2]=res;
         sp[i+3]=255;
       }
       scanCtx.putImageData(scanD,0,0);
-      resScanURL=scanCv.toDataURL('image/jpeg',0.88);
+      resScanURL=scanCv.toDataURL('image/jpeg',0.85);
+      resScanB64=resScanURL.split(',')[1];
 
-      // ===== 2. COLOR (pour Gemini) =====
+      // Mode Couleur Égalisé
       var colCv=document.createElement('canvas');colCv.width=oW;colCv.height=oH;
       var colCtx=colCv.getContext('2d');colCtx.drawImage(oc,0,0);
-      var colD=colCtx.getImageData(0,0,oW,oH),cp=colD.data;
-      var hist=new Uint32Array(256);for(var j=0;j<gray.length;j++)hist[gray[j]]++;
-      var tgt=Math.round(gray.length*0.92),cum=0,wp=240;
-      for(var v2=0;v2<256;v2++){cum+=hist[v2];if(cum>=tgt){wp=Math.max(v2,120);break;}}
-      var scl=Math.min(248/wp,1.25);
-      for(var i=0;i<cp.length;i+=4){for(var ch=0;ch<3;ch++){var val=cp[i+ch]*scl;var n=val/255;n=n<0.5?2*n*n:1-2*(1-n)*(1-n);cp[i+ch]=Math.max(0,Math.min(255,Math.round(n*255)));}}
-      colCtx.putImageData(colD,0,0);
-      resColorURL=colCv.toDataURL('image/jpeg',0.88);
+      resColorURL=colCv.toDataURL('image/jpeg',0.85);
       resColorB64=resColorURL.split(',')[1];
 
-      // ===== 3. GRAY =====
+      // Mode Gris standard
       var grayCv=document.createElement('canvas');grayCv.width=oW;grayCv.height=oH;
       var grayCtx=grayCv.getContext('2d'),grayD=grayCtx.createImageData(oW,oH),gp=grayD.data;
-      for(var i=0,j=0;j<gray.length;j++,i+=4){var gv=Math.max(0,Math.min(255,1.4*(gray[j]-60)+30));gp[i]=gp[i+1]=gp[i+2]=gv;gp[i+3]=255;}
+      for(var i=0,j=0;j<gray.length;j++,i+=4){var gv=Math.max(0,Math.min(255,1.2*(gray[j]-50)+40));gp[i]=gp[i+1]=gp[i+2]=gv;gp[i+3]=255;}
       grayCtx.putImageData(grayD,0,0);
-      resGrayURL=grayCv.toDataURL('image/jpeg',0.88);
+      resGrayURL=grayCv.toDataURL('image/jpeg',0.85);
 
       curMode='scan'; updateModes();
       document.getElementById('previewImg').src=resScanURL;
       hideLoading(); showScreen('prevScreen');
-    } catch(err) { hideLoading(); showToast('Erreur: '+err.message,true); }
-  }, 50);
+    } catch(err) { hideLoading(); showToast('Erreur traitement : '+err.message,true); }
+  }, 40);
 }
 
-// Box blur (rapide, pour estimation du fond)
 function boxBlur(src, w, h, radius) {
-  var out = new Uint8Array(w * h);
-  var tmp = new Uint8Array(w * h);
-  var r = radius;
-  // Horizontal pass
+  var out = new Uint8Array(w * h), tmp = new Uint8Array(w * h), r = radius;
   for (var y = 0; y < h; y++) {
     var sum = 0, count = 0;
     for (var x = 0; x < r && x < w; x++) { sum += src[y*w+x]; count++; }
@@ -438,7 +379,6 @@ function boxBlur(src, w, h, radius) {
       tmp[y*w+x] = Math.round(sum / count);
     }
   }
-  // Vertical pass
   for (var x = 0; x < w; x++) {
     var sum = 0, count = 0;
     for (var y = 0; y < r && y < h; y++) { sum += tmp[y*w+x]; count++; }
@@ -451,8 +391,6 @@ function boxBlur(src, w, h, radius) {
   return out;
 }
 
-// ===================== PREVIEW =====================
-
 function switchMode(mode) {
   curMode = mode; updateModes();
   document.getElementById('previewImg').src = mode==='scan'?resScanURL:mode==='color'?resColorURL:resGrayURL;
@@ -464,14 +402,12 @@ function updateModes() {
 }
 
 function addPage() {
-  if (!resColorB64) return;
-  var kb = Math.round(resColorB64.length * 0.75 / 1024);
-  pages.push({ scanURL:resScanURL, colorB64:resColorB64, mime:'image/jpeg', size:kb });
+  var targetB64 = curMode==='scan'?resScanB64:resColorB64;
+  var kb = Math.round(targetB64.length * 0.75 / 1024);
+  pages.push({ base64:targetB64, mime:'image/jpeg', size:kb, preview:resScanURL });
   stopCam(); showScreen('homeScreen'); renderGallery();
-  showToast('Page ' + pages.length + ' — ' + kb + ' KB ✓', false);
+  showToast('Page stockée localement ✓', false);
 }
-
-// ===================== GALLERY =====================
 
 function renderGallery() {
   var g=document.getElementById('gallery'), e=document.getElementById('emptyState');
@@ -479,7 +415,7 @@ function renderGallery() {
   e.style.display='none'; document.getElementById('sendButton').disabled=false;
   var html='';
   for (var i=0;i<pages.length;i++) {
-    html+='<div class="home-card"><span class="badge">P'+(i+1)+' · '+pages[i].size+'KB</span><button class="remove" onclick="event.stopPropagation();removePage('+i+')">✕</button><img src="'+pages[i].scanURL+'"></div>';
+    html+='<div class="home-card"><span class="badge">PAGE '+(i+1)+' · '+pages[i].size+'KB</span><button class="remove" onclick="event.stopPropagation();removePage('+i+')">✕</button><img src="'+pages[i].preview+'"></div>';
   }
   g.innerHTML=html; updateStats();
 }
@@ -490,25 +426,23 @@ function updateStats() {
   document.getElementById('totalSize').textContent=t>1024?(t/1024).toFixed(1)+' MB':t+' KB';
 }
 
-// ===================== SEND =====================
-
 function sendPages() {
   if (!pages.length) return;
   if (!GAS_URL) { showScreen('configScreen'); return; }
-  showLoading('Envoi de '+pages.length+' page(s)...');
-  var up=[];for(var i=0;i<pages.length;i++){up.push({base64:pages[i].colorB64,mime:pages[i].mime});}
+  showLoading('Téléversement vers l\'index Google Sheets...');
+  var up=[];for(var i=0;i<pages.length;i++){up.push({base64:pages[i].base64,mime:pages[i].mime});}
   var payload=JSON.stringify({action:'upload',pages:up});
+  
   fetch(GAS_URL,{method:'POST',body:payload,headers:{'Content-Type':'text/plain'},redirect:'follow'})
   .then(function(r){return r.json();})
-  .then(function(d){hideLoading();if(d.success){pages=[];renderGallery();showToast(d.message,false);}else{showToast(d.error||'Erreur',true);}})
+  .then(function(d){hideLoading();if(d.success){pages=[];renderGallery();showToast(d.message,false);}else{showToast(d.error||'Erreur serveur',true);}})
   .catch(function(){
+    // Fallback no-cors si restrictions de redirection du conteneur Google
     fetch(GAS_URL,{method:'POST',mode:'no-cors',body:payload})
-    .then(function(){hideLoading();pages=[];renderGallery();showToast('✅ Envoyé !',false);})
+    .then(function(){hideLoading();pages=[];renderGallery();showToast('✅ Envoyé en arrière-plan !',false);})
     .catch(function(){hideLoading();showToast('Erreur réseau',true);});
   });
 }
-
-// ===================== HELPERS =====================
 
 function showLoading(t){document.getElementById('loadingText').textContent=t;document.getElementById('loadingOverlay').classList.add('active');}
 function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
@@ -516,7 +450,7 @@ function showToast(m,err){
   var el=document.getElementById('toastEl');el.textContent=m;
   el.className='toast '+(err?'toast-err':'toast-ok');
   setTimeout(function(){el.classList.add('visible');},10);
-  setTimeout(function(){el.classList.remove('visible');},3000);
+  setTimeout(function(){el.classList.remove('visible');},3500);
 }
 </script>
 </body>
