@@ -44,7 +44,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .home-card .badge{position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;font-size:0.5rem;color:#2563eb;font-weight:600}
 .home-card .remove{position:absolute;top:4px;right:4px;width:22px;height:22px;background:#ef4444;border:none;border-radius:50%;color:#fff;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 
-/* MODULES CAMERA & CROP */
 .overlay-screen{position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column}
 .overlay-screen.active{display:flex}
 #videoEl{width:100%;height:100%;object-fit:cover}
@@ -57,15 +56,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .ccr.bl{bottom:-2px;left:-2px;border-right:none;border-top:none;border-radius:0 0 0 4px}
 .cam-controls{position:absolute;bottom:0;left:0;right:0;padding:25px;background:linear-gradient(transparent,rgba(0,0,0,0.9));display:flex;flex-direction:column;align-items:center;gap:15px}
 
-/* BOUTON CAPTURE AGRANDI */
 .shut{width:86px;height:86px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,0.1);cursor:pointer;position:relative}
 .shut::after{content:'';position:absolute;inset:6px;border-radius:50%;background:#fff}
 .shut:active{transform:scale(0.92)}
 
 .crop-wrap{flex:1;position:relative}
 .crop-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
-
-/* BOUTONS DE FILTRES */
 .pmbtn{padding:8px 16px;border-radius:8px;border:1px solid #252525;background:#141414;color:#aaa;font-size:0.75rem;font-weight:600;cursor:pointer;white-space:nowrap}
 .pmbtn.active{background:#2563eb;border-color:#2563eb;color:#fff}
 
@@ -76,18 +72,19 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 .toast{position:fixed;top:12px;left:12px;right:12px;padding:12px;border-radius:8px;font-weight:600;font-size:0.72rem;text-align:center;z-index:600;transform:translateY(-150%);transition:transform 0.25s ease-out}
 .toast.visible{transform:translateY(0)}
 .toast-ok{background:#10b981;color:#fff}.toast-err{background:#ef4444;color:#fff}
+.bar-track{flex:1;height:8px;background:#222;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:#2563eb;border-radius:4px}
 </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- ONGLET 1 : SCANNER -->
   <div class="screen active" id="tab-scan">
     <div class="header"><div><h1>Numérisation</h1><p>File d'attente Drive</p></div></div>
     <div style="font-size:0.65rem;color:#555;margin-bottom:8px">PAGES CAPTURÉES : <b id="pageCount" style="color:#fff">0</b></div>
     <div id="emptyState" style="text-align:center;padding:40px 20px;color:#444">
       <div style="font-size:2.5rem;margin-bottom:10px">📸</div>
-      <p style="font-size:0.75rem;line-height:1.4">Prêt pour le scan des bordereaux.<br>Résolution stabilisée anti-zoom.</p>
+      <p style="font-size:0.75rem;line-height:1.4">Prêt pour le scan des bordereaux.<br>Rendu Full HD net.</p>
     </div>
     <div class="home-grid" id="gallery"></div>
     <div style="margin-top:auto;padding-top:20px;display:flex;gap:10px">
@@ -96,7 +93,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
     </div>
   </div>
 
-  <!-- ONGLET 2 : ANALYTICS -->
   <div class="screen" id="tab-dash">
     <div class="header"><div><h1>Tableau de Bord</h1><p>Indicateurs de Performance</p></div></div>
     <div class="kpi-grid">
@@ -111,7 +107,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
     <button class="btn btn-b" onclick="fetchStats()" style="width:100%">🔄 Actualiser les indicateurs</button>
   </div>
 
-  <!-- ONGLET 3 : CLASSEMENT -->
   <div class="screen" id="tab-rank">
     <div class="header"><div><h1>Volume Fournisseurs</h1><p>Classement par volume financier</p></div></div>
     <div class="ranking-list" id="supplierRanking">
@@ -126,12 +121,16 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
   </nav>
 </div>
 
-<!-- MODULES ÉCRANS FLOTTANTS -->
 <div class="overlay-screen" id="camScreen">
   <video id="videoEl" autoplay playsinline muted></video>
   <div class="cam-overlay"><div class="cam-guide"><div class="ccr tl"></div><div class="ccr tr"></div><div class="ccr br"></div><div class="ccr bl"></div></div></div>
+  
+  <div style="position:absolute;top:0;left:0;right:0;padding:20px;display:flex;justify-content:flex-end;z-index:10;">
+    <button id="flashBtn" onclick="toggleFlash()" style="width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:1.2rem;backdrop-filter:blur(4px);cursor:pointer">🔦</button>
+  </div>
+
   <div class="cam-controls">
-    <div style="font-size:0.62rem;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;">Lentille principale active. Cadre le document.</div>
+    <div style="font-size:0.62rem;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;">Objectif Full HD actif. Stabilise le document.</div>
     <button class="shut" onclick="takePhoto()"></button>
     <button class="btn btn-w" onclick="closeCamera()" style="padding:8px 16px;font-size:0.75rem;margin-top:5px;background:transparent;color:#fff;border:1px solid #fff;">Annuler</button>
   </div>
@@ -148,13 +147,13 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#ff
 
 <div class="overlay-screen" id="prevScreen" style="z-index:160;">
   <div style="padding:16px;background:#121212;display:flex;justify-content:space-between;align-items:center;">
-    <h3 style="font-size:0.9rem;">Filtres IA</h3>
+    <h3 style="font-size:0.9rem;">Filtres de Traitement Numérique</h3>
     <button class="btn btn-w" onclick="goBackToCam()" style="padding:6px 12px;font-size:0.7rem;background:#333;color:#fff;border:none;">✕</button>
   </div>
   <div style="display:flex; justify-content:center; gap:8px; padding:12px; background:#1a1a1a; border-bottom:1px solid #222;">
     <button class="pmbtn active" id="modeScan" onclick="switchMode('scan')">📄 Anti-Ombre</button>
-    <button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Couleur</button>
-    <button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ N&B</button>
+    <button class="pmbtn" id="modeColor" onclick="switchMode('color')">🎨 Couleur Brut</button>
+    <button class="pmbtn" id="modeGray" onclick="switchMode('gray')">⚫ N&B Standard</button>
   </div>
   <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden;">
     <img id="previewImg" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.5);">
@@ -175,6 +174,7 @@ var pages = [];
 var cameraStream = null, videoTrack = null, capturedImage = null, cropCorners = [];
 var cropDW = 0, cropDH = 0, cropOX = 0, cropOY = 0, dragging = -1, HR = 22;
 var resScanURL = '', resColorURL = '', resGrayURL = '', curMode = 'scan';
+var torchActive = false; // Variable pour le flash
 
 function switchTab(tabId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -186,14 +186,29 @@ function switchTab(tabId) {
 
 function openCamera() {
   showScreen('camScreen');
+  torchActive = false;
+  document.getElementById('flashBtn').style.background = 'rgba(255,255,255,0.2)';
+  
   navigator.mediaDevices.getUserMedia({
-    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
     audio: false
   }).then(function(stream) {
     cameraStream = stream; videoTrack = stream.getVideoTracks()[0];
     document.getElementById('videoEl').srcObject = stream;
   }).catch(function(err) {
     showScreen('none'); showToast('Erreur vidéo : ' + err.message, true);
+  });
+}
+
+// Fonction FLASH corrigée
+function toggleFlash() {
+  if (!videoTrack) return;
+  var newState = !torchActive;
+  videoTrack.applyConstraints({ advanced: [{ torch: newState }] }).then(function() {
+    torchActive = newState;
+    document.getElementById('flashBtn').style.background = torchActive ? '#f59e0b' : 'rgba(255,255,255,0.2)';
+  }).catch(function(err) {
+    showToast('Flash non supporté par ce téléphone', true);
   });
 }
 
@@ -212,6 +227,9 @@ function cancelCrop() { showScreen('camScreen'); }
 function goBackToCam() { showScreen('camScreen'); }
 
 function stopCam() {
+  if (torchActive && videoTrack) {
+    videoTrack.applyConstraints({ advanced: [{ torch: false }] }).catch(function(){});
+  }
   if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; videoTrack = null; }
   document.getElementById('videoEl').srcObject = null;
 }
@@ -220,10 +238,12 @@ function takePhoto() {
   var video = document.getElementById('videoEl');
   var c = document.createElement('canvas');
   c.width = video.videoWidth; c.height = video.videoHeight;
-  c.getContext('2d').drawImage(video, 0, 0);
+  var ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(video, 0, 0);
   capturedImage = new Image();
   capturedImage.onload = function() { showScreen('cropScreen'); initCrop(); };
-  capturedImage.src = c.toDataURL('image/jpeg', 0.9);
+  capturedImage.src = c.toDataURL('image/jpeg', 0.95);
 }
 
 function initCrop() {
@@ -295,17 +315,20 @@ function boxBlur(src, w, h, radius) {
 }
 
 function processCrop() {
-  showLoading('Application des filtres IA...');
+  showLoading('Application des filtres de lissage...');
   setTimeout(function() {
     try {
       var tl=cropCorners[0],tr=cropCorners[1],br=cropCorners[2],bl=cropCorners[3];
       var oW=Math.round(Math.max(Math.sqrt(Math.pow(tr.x-tl.x,2)+Math.pow(tr.y-tl.y,2)), Math.sqrt(Math.pow(br.x-bl.x,2)+Math.pow(br.y-bl.y,2))));
       var oH=Math.round(Math.max(Math.sqrt(Math.pow(bl.x-tl.x,2)+Math.pow(bl.y-tl.y,2)), Math.sqrt(Math.pow(br.x-tr.x,2)+Math.pow(br.y-tr.y,2))));
-      if(oW>1400){oH=Math.round(oH*1400/oW);oW=1400;}
+      if(oW>1500){oH=Math.round(oH*1500/oW);oW=1500;}
       
       var sc=document.createElement('canvas'); sc.width=capturedImage.naturalWidth; sc.height=capturedImage.naturalHeight;
-      sc.getContext('2d').drawImage(capturedImage,0,0);
-      var sd=sc.getContext('2d').getImageData(0,0,sc.width,sc.height).data;
+      var sctx = sc.getContext('2d');
+      sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
+      sctx.drawImage(capturedImage,0,0);
+      var sd=sctx.getImageData(0,0,sc.width,sc.height).data;
+      
       var oc=document.createElement('canvas'); oc.width=oW; oc.height=oH;
       var octx=oc.getContext('2d'), od=octx.createImageData(oW,oH), op=od.data;
 
@@ -319,35 +342,33 @@ function processCrop() {
         op[oi+3]=255;
       }}
       octx.putImageData(od,0,0);
-      resColorURL = oc.toDataURL('image/jpeg',0.85);
+      resColorURL = oc.toDataURL('image/jpeg',0.90);
 
       var gray=new Uint8Array(oW*oH);
       for(var i=0,j=0;i<op.length;i+=4,j++){gray[j]=Math.round(0.299*op[i]+0.587*op[i+1]+0.114*op[i+2]);}
       
-      // Mode Anti-Ombre IA
       var blurred = boxBlur(gray, oW, oH, Math.max(15, Math.round(Math.min(oW,oH)/12)));
       var scanCv=document.createElement('canvas'); scanCv.width=oW; scanCv.height=oH;
       var scanCtx=scanCv.getContext('2d'), scanD=scanCtx.createImageData(oW,oH), sp=scanD.data;
       for(var i=0,j=0;j<gray.length;j++,i+=4){
         var bg=Math.max(blurred[j],1);
-        var res=Math.round((gray[j]/bg)*230);
-        res = res < 150 ? Math.max(0, res * 0.4) : 255;
+        var res=Math.round((gray[j]/bg)*235);
+        res = res < 155 ? Math.max(0, res * 0.35) : 255;
         sp[i]=sp[i+1]=sp[i+2]=res; sp[i+3]=255;
       }
       scanCtx.putImageData(scanD,0,0);
-      resScanURL = scanCv.toDataURL('image/jpeg',0.85);
+      resScanURL = scanCv.toDataURL('image/jpeg',0.90);
 
-      // Mode N&B basique
       var grayCv=document.createElement('canvas'); grayCv.width=oW; grayCv.height=oH;
       var grayCtx=grayCv.getContext('2d'), grayD=grayCtx.createImageData(oW,oH), gp=grayD.data;
       for(var i=0,j=0;j<gray.length;j++,i+=4){var gv=Math.max(0,Math.min(255,1.2*(gray[j]-50)+40)); gp[i]=gp[i+1]=gp[i+2]=gv; gp[i+3]=255;}
       grayCtx.putImageData(grayD,0,0);
-      resGrayURL = grayCv.toDataURL('image/jpeg',0.85);
+      resGrayURL = grayCv.toDataURL('image/jpeg',0.90);
 
       curMode = 'scan'; updateModes();
       document.getElementById('previewImg').src = resScanURL;
       hideLoading(); showScreen('prevScreen');
-    } catch(err) { hideLoading(); showToast('Erreur Filtre : ' + err.message, true); }
+    } catch(err) { hideLoading(); showToast('Erreur : ' + err.message, true); }
   }, 50);
 }
 
@@ -367,7 +388,7 @@ function addPage() {
   var b64 = targetURL.split(',')[1];
   pages.push({ base64:b64, mime:'image/jpeg', size:Math.round(b64.length*0.75/1024), preview:targetURL });
   stopCam(); showScreen('none'); renderGallery();
-  showToast('Page validée ✓');
+  showToast('Page stockée avec succès ✓');
 }
 
 function renderGallery() {
@@ -380,18 +401,27 @@ function renderGallery() {
 function removePage(i) { pages.splice(i,1); renderGallery(); }
 
 function sendPages() {
-  showLoading('Synchronisation Sheets...');
+  showLoading('Envoi vers la file Sheets...');
   var payload = JSON.stringify({action:'upload', pages: pages.map(p => ({base64:p.base64, mime:p.mime}))});
   fetch(GAS_URL,{method:'POST', body:payload, headers:{'Content-Type':'text/plain'}})
   .then(r => r.json()).then(d => {
-    hideLoading(); if(d.success){ pages=[]; renderGallery(); showToast('Facture(s) envoyée(s) !'); } else showToast(d.error, true);
-  }).catch(() => { hideLoading(); showToast('Vérifie le lien Backend Apps Script', true); });
+    hideLoading(); if(d.success){ pages=[]; renderGallery(); showToast('Bordereaux synchronisés !'); } else showToast(d.error, true);
+  }).catch(() => { hideLoading(); showToast('Vérifie le lien d\'application Apps Script', true); });
 }
 
+// CORRECTION CORS : La récupération des stats se fait désormais en POST pour éviter le blocage réseau
 function fetchStats() {
   if(!GAS_URL) { showToast('URL non configurée', true); return; }
-  showLoading('Analyse des prix...');
-  fetch(GAS_URL + "?action=getStats")
+  showLoading('Calcul des indicateurs de prix...');
+  
+  var payload = JSON.stringify({action: 'getStats'});
+  
+  fetch(GAS_URL, {
+    method: 'POST',
+    body: payload,
+    headers: {'Content-Type': 'text/plain'},
+    redirect: 'follow'
+  })
   .then(r => r.json()).then(d => {
     hideLoading(); globalStats = d;
     document.getElementById('kpi-total').textContent = d.totalHt.toFixed(2) + " €";
@@ -409,7 +439,7 @@ function fetchStats() {
         <div class="ranking-val">${f.total.toFixed(2)}€</div>
       </div>
     `).join('');
-  }).catch(() => { hideLoading(); showToast('Erreur réseau / CORS', true); });
+  }).catch(() => { hideLoading(); showToast('Erreur réseau / Déploiement', true); });
 }
 
 function updateProductChart() {
